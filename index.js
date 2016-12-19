@@ -18,6 +18,15 @@ let db = require('./db');
 
 var app = express();
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, PUT, DELETE, POST")
+  next();
+})
+
+
+
 app.use(require('cookie-parser')(credentials.cookieSecret));
 app.use(require('express-session')({
 resave: false,
@@ -34,7 +43,7 @@ app.set('view engine', 'handlebars');
 
 app.use(express.static(__dirname + '/public'));
 
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 3000);
 
 app.post('/authoris', (req, res) => {
 	let data = db.get(),
