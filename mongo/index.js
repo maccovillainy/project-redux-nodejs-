@@ -1,20 +1,20 @@
 let express = require('express');
-let formidable = require('formidable' );
+var formidable = require('formidable' );
 let fs = require('fs')
 let credentials = require('./credentials')// секрет куки
 let router = express.Router();
 let expressValidator;
 expressValidator = require('express-validator');
 let expressSession = require('express-session')
-let app = express();
+var app = express();
+
 let mongo = require('mongodb').MongoClient;
 
 let url = 'mongodb://localhost:27017/test';
-let id = 4;
 
 let assert = require('assert')
 
-
+let id = 4;
 
  function templ(name, pass, arr){
 	this.id = ++id;
@@ -25,7 +25,6 @@ let assert = require('assert')
 }
 
 let db = require('./db');
-
 
 
 
@@ -52,7 +51,7 @@ app.use(expressSession({
 }))
 app.use(require('body-parser').urlencoded({ extended: true }));
 // Установка механизма представления handlebars
-let handlebars = require('express-handlebars')
+var handlebars = require('express-handlebars')
 	.create({ defaultLayout:'main' });
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
@@ -89,9 +88,7 @@ app.post('/authoris', (req, res) => {
 })
 
 app.get('/test', (req, res) => {
-	console.log(req.session.success)
-	res.render('test', {success: req.session.success, errors: req.session.errors})
-	req.session.errors = null;
+
 })
 
 app.post('/redirect', (req, res) => {
@@ -111,11 +108,41 @@ app.post('/redirect', (req, res) => {
 })
 
 
-app.get('/', (req, res) =>{
+app.get('/', (req, res, next) =>{
 	res.render('signUp')
 }) 
 
-app.post('/insert', (req, res, next) => {
+
+app.get('/get-data', (req, res) => {
+	mongo.connect(url, (err, db) => {
+		let data = db.collection('user-data').find();
+		let elems = [];
+		data.forEach((obj, err) => {
+			elems.push(obj)
+		}, () => {
+			db.close();
+			res.render('test', {data: elems})
+		})
+	})
+})
+
+app.post('/insert', (req, res) => {
+	let data = {
+		title: req.body.title,
+		content: req.body.content,
+		author: req.body.author
+	}
+	mongo.connect(url, (err, db) => {
+		db.collection('user-data').insert(data, (err, res) => db.close())
+	})
+	res.redirect(303, '/get-data')
+})
+
+app.post('/update', (req, res, next) => {
+
+})
+
+app.post('/delete', (req, res, next) => {
 
 })
 

@@ -1,0 +1,11 @@
+{{# if data}}
+  {{# each data}}
+    <ul>
+      <li>{{ this.title }}</li>
+      <li>{{ this.author }}</li>
+      <li>{{ this.content }}</li>
+    </ul>
+  {{/each}}
+{{/if}}
+<h2>test page</h2>
+<p>user {{ id }} </p>
