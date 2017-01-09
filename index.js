@@ -35,7 +35,18 @@ let userDataSchema = new Schema(
 
 let UserData = mongoose.model('UserData', userDataSchema)
 
+//UserData.findOneAndRemove({name: 'admin'}).exec()
 
+UserData.find((err, data) => {
+
+	console.log(data)
+	if (data.length) return
+	new UserData({
+		name: 'admin',
+		pass: '1',
+		blogs: []
+	}).save()
+})
 /*	let data = {
 		name: "admin",
 		pass: '1',
@@ -96,6 +107,15 @@ app.get('/', (req, res) =>{
 	} )
 }) 
 
+app.get('/session', (req, res) => {
+	console.log(req.session.userName)
+	if (req.session.userName){
+		UserData.find({name : req.session.userName}, (err, data) => {
+			res.send(data)
+		})
+	}else res.send(false)
+})
+
 app.post('/verifyin', (req, res) => {
 	UserData.find()
 		.then(doc => {
@@ -104,8 +124,21 @@ app.post('/verifyin', (req, res) => {
 				if (item.name == req.body.name && item.pass == req.body.pass)
 					success = true;
 			})
+					if (success) req.session.userName = req.body.name
 					res.send(success)
 		})
+})
+
+app.get('/signout', (req, res) => {
+	if (req.session.userName) delete req.session.userName
+	if (!req.session.userName) res.send(true)
+	else res.send(false)
+})
+
+app.post('/register', (req, res) => {
+	console.log(req.body)
+	req.check('email', 'invalid').isEmail()
+	console.log(req.validationErrors())
 })
 
 // пользовательская страница 404

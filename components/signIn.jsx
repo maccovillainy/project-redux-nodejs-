@@ -10,19 +10,20 @@ import { goSigned } from '../actions/sign.jsx'
 class SignIn extends Component {
 	onSend(e){
 		e.preventDefault()
+		let name = ReactDOM.findDOMNode(this.refs.name).value
 		$.ajax({
 			method: 'POST',
 			url: '/verifyin',
 			data:{
-				name: ReactDOM.findDOMNode(this.refs.name).value,
+				name: name,
 				pass: ReactDOM.findDOMNode(this.refs.pass).value
 			}
 		}).then(res => {
-			this.props.goSigned(res)
+			this.props.goSigned(res, name)
 		})
 	}
 	componentWillReceiveProps(nextProps) {
-		if(nextProps.sign.sign) hashHistory.push('/')
+		if(nextProps.verify.sign) hashHistory.push('/')
 	}
 	render(){
 		return (
@@ -55,16 +56,140 @@ class SignIn extends Component {
 
 const mapState = (state) => {
 	return {
-		sign: state.signed
+		verify: state.signed
 	}
 }
 
 const mapDispatch = (dispatch) => {
 	return {
-		goSigned: (bul) => {
-			dispatch(goSigned(bul))
+		goSigned: (bul, name) => {
+			dispatch(goSigned(bul, name))
 		}
 	}
 }
 
 export default connect(mapState, mapDispatch)(SignIn)
+
+/*
+
+let arr = [
+	{
+		id:1,
+		w:3,
+		h:4
+	},
+	{
+		id:2,
+		w:3,
+		h:5
+	},
+	{
+		id:3,
+		w:2,
+		h:5
+	},
+	{
+		id:4,
+		w:4,
+		h:6
+	},
+	{
+		id:5,
+		w:200,
+		h:400
+	},
+	{
+		id:6,
+		w:400,
+		h:200
+	}
+]
+
+let pics = []
+let aa = [];
+let result = [];
+
+const getImage = (w,h) => {
+	arr.forEach(item => {
+		pics.push({
+			res:Math.abs(item.w - w) + Math.abs(item.h - h),
+			otnW:item.w / w,
+			otnH: item.h / h,
+			id: item.id
+		})	
+	})
+		let id = [];
+	aa = pics.reduce((cur, next) => {
+		if(cur.res < next.res && id.indexOf(cur.id) == -1){ 
+					result.push(cur)
+					id.push(cur.id)
+					return cur
+				}else if (cur.res == next.res && id.indexOf(next.id) == -1){
+					result.push(next)
+					id.push(next.id)
+					return next
+				}else if (cur.res > next.res && id.indexOf(next.id) == -1){
+					result.push(next)
+					id.push(next.id)
+					return next
+				}else
+				return cur
+
+	})
+	if(result.length> 1)
+	console.log(result.reduce((c,n) => {
+		if(c.otnW >= n.otnW && c.otnH>= n.otnH)
+			return c
+		else return n
+	}))
+	else console.log(result[0].id + ': - id of pictures')
+}
+
+getImage(500,25)*/
+
+/*
+
+
+let arr = [
+	{
+		id:1,
+		w:3,
+		h:4
+	},
+	{
+		id:2,
+		w:3,
+		h:5
+	},
+	{
+		id:3,
+		w:2,
+		h:5
+	},
+	{
+		id:4,
+		w:4,
+		h:6
+	}
+]
+
+let pics = []
+let aa = [];
+
+const getImage = (w,h) => {
+	arr.forEach(item => {
+		pics.push({
+			res:Math.abs(item.w - w) + Math.abs(item.h - h),
+			id: item.id
+		})	
+	})
+	console.log(pics)
+	aa = pics.reduce((cur, next) => {
+		if(cur.res <= next.res) return cur
+		else return next
+	})
+	console.log(aa)
+}
+
+getImage(4,5)
+*/

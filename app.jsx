@@ -9,17 +9,18 @@ import Sign from './components/sign.jsx'
 import SignIn from './components/signIn.jsx'
 import SignUp from './components/signUp.jsx'
 import Main from './components/main.jsx'
-import Blog from './components/Blog.jsx'
+import Blog from './components/blog.jsx'
 
 import store from "./store.jsx"
 class App extends Component{
 	render(){
 		return(
-			<div>
-					<h1 
-						onClick={()=> hashHistory.push('/')} 
-						className='container'
-						style={{cursor:'pointer'}}>Blog</h1>
+			<div className='container'>
+				<h1 
+					onClick={()=> hashHistory.push('/')} 
+					className='d-inline-block'
+					style={{cursor:'pointer'}}>
+					letBlog</h1>
 				{this.props.children}
 			</div>
 		)

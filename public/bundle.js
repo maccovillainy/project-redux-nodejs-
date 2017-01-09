@@ -76,9 +76,9 @@
 
 	var _main2 = _interopRequireDefault(_main);
 
-	var _Blog = __webpack_require__(275);
+	var _blog = __webpack_require__(275);
 
-	var _Blog2 = _interopRequireDefault(_Blog);
+	var _blog2 = _interopRequireDefault(_blog);
 
 	var _store = __webpack_require__(276);
 
@@ -106,16 +106,16 @@
 			value: function render() {
 				return _react2.default.createElement(
 					'div',
-					null,
+					{ className: 'container' },
 					_react2.default.createElement(
 						'h1',
 						{
 							onClick: function onClick() {
 								return _reactRouter.hashHistory.push('/');
 							},
-							className: 'container',
+							className: 'd-inline-block',
 							style: { cursor: 'pointer' } },
-						'Blog'
+						'letBlog'
 					),
 					this.props.children
 				);
@@ -137,7 +137,7 @@
 				_react2.default.createElement(_reactRouter.IndexRoute, { component: _main2.default }),
 				_react2.default.createElement(_reactRouter.Route, { path: 'signin', component: _signIn2.default }),
 				_react2.default.createElement(_reactRouter.Route, { path: 'signup', component: _signUp2.default }),
-				_react2.default.createElement(_reactRouter.Route, { path: 'blog', component: _Blog2.default })
+				_react2.default.createElement(_reactRouter.Route, { path: 'blog', component: _blog2.default })
 			)
 		)
 	), root);
@@ -787,17 +787,6 @@
 	  }
 	};
 
-	var fiveArgumentPooler = function (a1, a2, a3, a4, a5) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, a1, a2, a3, a4, a5);
-	    return instance;
-	  } else {
-	    return new Klass(a1, a2, a3, a4, a5);
-	  }
-	};
-
 	var standardReleaser = function (instance) {
 	  var Klass = this;
 	  !(instance instanceof Klass) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Trying to release an instance into a pool of a different type.') : _prodInvariant('25') : void 0;
@@ -837,8 +826,7 @@
 	  oneArgumentPooler: oneArgumentPooler,
 	  twoArgumentPooler: twoArgumentPooler,
 	  threeArgumentPooler: threeArgumentPooler,
-	  fourArgumentPooler: fourArgumentPooler,
-	  fiveArgumentPooler: fiveArgumentPooler
+	  fourArgumentPooler: fourArgumentPooler
 	};
 
 	module.exports = PooledClass;
@@ -3178,7 +3166,14 @@
 	    // We warn in this case but don't throw. We expect the element creation to
 	    // succeed and there will likely be errors in render.
 	    if (!validType) {
-	      process.env.NODE_ENV !== 'production' ? warning(false, 'React.createElement: type should not be null, undefined, boolean, or ' + 'number. It should be a string (for DOM elements) or a ReactClass ' + '(for composite components).%s', getDeclarationErrorAddendum()) : void 0;
+	      if (typeof type !== 'function' && typeof type !== 'string') {
+	        var info = '';
+	        if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
+	          info += ' You likely forgot to export your component from the file ' + 'it\'s defined in.';
+	        }
+	        info += getDeclarationErrorAddendum();
+	        process.env.NODE_ENV !== 'production' ? warning(false, 'React.createElement: type is invalid -- expected a string (for ' + 'built-in components) or a class/function (for composite ' + 'components) but got: %s.%s', type == null ? type : typeof type, info) : void 0;
+	      }
 	    }
 
 	    var element = ReactElement.createElement.apply(this, arguments);
@@ -4149,7 +4144,7 @@
 
 	'use strict';
 
-	module.exports = '15.4.1';
+	module.exports = '15.4.2';
 
 /***/ },
 /* 31 */
@@ -4348,6 +4343,13 @@
 	var internalInstanceKey = '__reactInternalInstance$' + Math.random().toString(36).slice(2);
 
 	/**
+	 * Check if a given node should be cached.
+	 */
+	function shouldPrecacheNode(node, nodeID) {
+	  return node.nodeType === 1 && node.getAttribute(ATTR_NAME) === String(nodeID) || node.nodeType === 8 && node.nodeValue === ' react-text: ' + nodeID + ' ' || node.nodeType === 8 && node.nodeValue === ' react-empty: ' + nodeID + ' ';
+	}
+
+	/**
 	 * Drill down (through composites and empty components) until we get a host or
 	 * host text component.
 	 *
@@ -4412,7 +4414,7 @@
 	    }
 	    // We assume the child nodes are in the same order as the child instances.
 	    for (; childNode !== null; childNode = childNode.nextSibling) {
-	      if (childNode.nodeType === 1 && childNode.getAttribute(ATTR_NAME) === String(childID) || childNode.nodeType === 8 && childNode.nodeValue === ' react-text: ' + childID + ' ' || childNode.nodeType === 8 && childNode.nodeValue === ' react-empty: ' + childID + ' ') {
+	      if (shouldPrecacheNode(childNode, childID)) {
 	        precacheNode(childInst, childNode);
 	        continue outer;
 	      }
@@ -6653,17 +6655,6 @@
 	  }
 	};
 
-	var fiveArgumentPooler = function (a1, a2, a3, a4, a5) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, a1, a2, a3, a4, a5);
-	    return instance;
-	  } else {
-	    return new Klass(a1, a2, a3, a4, a5);
-	  }
-	};
-
 	var standardReleaser = function (instance) {
 	  var Klass = this;
 	  !(instance instanceof Klass) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Trying to release an instance into a pool of a different type.') : _prodInvariant('25') : void 0;
@@ -6703,8 +6694,7 @@
 	  oneArgumentPooler: oneArgumentPooler,
 	  twoArgumentPooler: twoArgumentPooler,
 	  threeArgumentPooler: threeArgumentPooler,
-	  fourArgumentPooler: fourArgumentPooler,
-	  fiveArgumentPooler: fiveArgumentPooler
+	  fourArgumentPooler: fourArgumentPooler
 	};
 
 	module.exports = PooledClass;
@@ -11522,12 +11512,18 @@
 	    } else {
 	      var contentToUse = CONTENT_TYPES[typeof props.children] ? props.children : null;
 	      var childrenToUse = contentToUse != null ? null : props.children;
+	      // TODO: Validate that text is allowed as a child of this node
 	      if (contentToUse != null) {
-	        // TODO: Validate that text is allowed as a child of this node
-	        if (process.env.NODE_ENV !== 'production') {
-	          setAndValidateContentChildDev.call(this, contentToUse);
+	        // Avoid setting textContent when the text is empty. In IE11 setting
+	        // textContent on a text area will cause the placeholder to not
+	        // show within the textarea until it has been focused and blurred again.
+	        // https://github.com/facebook/react/issues/6731#issuecomment-254874553
+	        if (contentToUse !== '') {
+	          if (process.env.NODE_ENV !== 'production') {
+	            setAndValidateContentChildDev.call(this, contentToUse);
+	          }
+	          DOMLazyTree.queueText(lazyTree, contentToUse);
 	        }
-	        DOMLazyTree.queueText(lazyTree, contentToUse);
 	      } else if (childrenToUse != null) {
 	        var mountImages = this.mountChildren(childrenToUse, transaction, context);
 	        for (var i = 0; i < mountImages.length; i++) {
@@ -13447,7 +13443,17 @@
 	      }
 	    } else {
 	      if (props.value == null && props.defaultValue != null) {
-	        node.defaultValue = '' + props.defaultValue;
+	        // In Chrome, assigning defaultValue to certain input types triggers input validation.
+	        // For number inputs, the display value loses trailing decimal points. For email inputs,
+	        // Chrome raises "The specified value <x> is not a valid email address".
+	        //
+	        // Here we check to see if the defaultValue has actually changed, avoiding these problems
+	        // when the user is inputting text
+	        //
+	        // https://github.com/facebook/react/issues/7253
+	        if (node.defaultValue !== '' + props.defaultValue) {
+	          node.defaultValue = '' + props.defaultValue;
+	        }
 	      }
 	      if (props.checked == null && props.defaultChecked != null) {
 	        node.defaultChecked = !!props.defaultChecked;
@@ -14194,9 +14200,15 @@
 	    // This is in postMount because we need access to the DOM node, which is not
 	    // available until after the component has mounted.
 	    var node = ReactDOMComponentTree.getNodeFromInstance(inst);
+	    var textContent = node.textContent;
 
-	    // Warning: node.value may be the empty string at this point (IE11) if placeholder is set.
-	    node.value = node.textContent; // Detach value from defaultValue
+	    // Only set node.value if textContent is equal to the expected
+	    // initial value. In IE10/IE11 there is a bug where the placeholder attribute
+	    // will populate textContent as well.
+	    // https://developer.microsoft.com/microsoft-edge/platform/issues/101525/
+	    if (textContent === inst._wrapperState.initialValue) {
+	      node.value = textContent;
+	    }
 	  }
 	};
 
@@ -14998,7 +15010,17 @@
 	    instance = ReactEmptyComponent.create(instantiateReactComponent);
 	  } else if (typeof node === 'object') {
 	    var element = node;
-	    !(element && (typeof element.type === 'function' || typeof element.type === 'string')) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', element.type == null ? element.type : typeof element.type, getDeclarationErrorAddendum(element._owner)) : _prodInvariant('130', element.type == null ? element.type : typeof element.type, getDeclarationErrorAddendum(element._owner)) : void 0;
+	    var type = element.type;
+	    if (typeof type !== 'function' && typeof type !== 'string') {
+	      var info = '';
+	      if (process.env.NODE_ENV !== 'production') {
+	        if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
+	          info += ' You likely forgot to export your component from the file ' + 'it\'s defined in.';
+	        }
+	      }
+	      info += getDeclarationErrorAddendum(element._owner);
+	       true ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', type == null ? type : typeof type, info) : _prodInvariant('130', type == null ? type : typeof type, info) : void 0;
+	    }
 
 	    // Special case string values
 	    if (typeof element.type === 'string') {
@@ -15288,7 +15310,7 @@
 	      // Since plain JS classes are defined without any special initialization
 	      // logic, we can not catch common errors early. Therefore, we have to
 	      // catch them here, at initialization time, instead.
-	      process.env.NODE_ENV !== 'production' ? warning(!inst.getInitialState || inst.getInitialState.isReactClassApproved, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', this.getName() || 'a component') : void 0;
+	      process.env.NODE_ENV !== 'production' ? warning(!inst.getInitialState || inst.getInitialState.isReactClassApproved || inst.state, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', this.getName() || 'a component') : void 0;
 	      process.env.NODE_ENV !== 'production' ? warning(!inst.getDefaultProps || inst.getDefaultProps.isReactClassApproved, 'getDefaultProps was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Use a static property to define defaultProps instead.', this.getName() || 'a component') : void 0;
 	      process.env.NODE_ENV !== 'production' ? warning(!inst.propTypes, 'propTypes was defined as an instance property on %s. Use a static ' + 'property to define propTypes instead.', this.getName() || 'a component') : void 0;
 	      process.env.NODE_ENV !== 'production' ? warning(!inst.contextTypes, 'contextTypes was defined as an instance property on %s. Use a ' + 'static property to define contextTypes instead.', this.getName() || 'a component') : void 0;
@@ -16292,14 +16314,11 @@
 
 	'use strict';
 
-	var _prodInvariant = __webpack_require__(35),
-	    _assign = __webpack_require__(4);
+	var _prodInvariant = __webpack_require__(35);
 
 	var invariant = __webpack_require__(8);
 
 	var genericComponentClass = null;
-	// This registry keeps track of wrapper classes around host tags.
-	var tagToComponentClass = {};
 	var textComponentClass = null;
 
 	var ReactHostComponentInjection = {
@@ -16312,11 +16331,6 @@
 	  // rendered as props.
 	  injectTextComponentClass: function (componentClass) {
 	    textComponentClass = componentClass;
-	  },
-	  // This accepts a keyed object with classes as values. Each key represents a
-	  // tag. That particular tag will use this class instead of the generic one.
-	  injectComponentClasses: function (componentClasses) {
-	    _assign(tagToComponentClass, componentClasses);
 	  }
 	};
 
@@ -21171,7 +21185,7 @@
 
 	'use strict';
 
-	module.exports = '15.4.1';
+	module.exports = '15.4.2';
 
 /***/ },
 /* 172 */
@@ -28576,7 +28590,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	  value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -28589,6 +28603,10 @@
 
 	var _reactRouter = __webpack_require__(178);
 
+	var _reactRedux = __webpack_require__(233);
+
+	var _sign = __webpack_require__(271);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -28598,39 +28616,82 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var Sign = function (_Component) {
-		_inherits(Sign, _Component);
+	  _inherits(Sign, _Component);
 
-		function Sign() {
-			_classCallCheck(this, Sign);
+	  function Sign() {
+	    _classCallCheck(this, Sign);
 
-			return _possibleConstructorReturn(this, (Sign.__proto__ || Object.getPrototypeOf(Sign)).apply(this, arguments));
-		}
+	    return _possibleConstructorReturn(this, (Sign.__proto__ || Object.getPrototypeOf(Sign)).apply(this, arguments));
+	  }
 
-		_createClass(Sign, [{
-			key: 'render',
-			value: function render() {
-				return _react2.default.createElement(
-					'div',
-					{ className: 'row justify-content-end' },
-					_react2.default.createElement(
-						_reactRouter.Link,
-						{ to: '/signin' },
-						'SignIn'
-					),
-					'/',
-					_react2.default.createElement(
-						_reactRouter.Link,
-						{ to: '/signup' },
-						'SignUp'
-					)
-				);
-			}
-		}]);
+	  _createClass(Sign, [{
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
 
-		return Sign;
+	      var data = void 0;
+	      if (this.props.verify.sign) {
+	        data = _react2.default.createElement(
+	          'div',
+	          { className: 'row align-items-center  justify-content-end' },
+	          _react2.default.createElement(
+	            'h2',
+	            null,
+	            'Welcome, ',
+	            this.props.verify.name,
+	            '! '
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: function onClick() {
+	                return _this2.props.signOut();
+	              }, className: 'btn btn-secondary btn-sm ml-2' },
+	            'SIGN OUT'
+	          )
+	        );
+	      } else {
+	        data = _react2.default.createElement(
+	          'div',
+	          { className: 'row align-items-center justify-content-end' },
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/signin' },
+	            'Sign in'
+	          ),
+	          '/',
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/signup' },
+	            'Sig up'
+	          )
+	        );
+	      }
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        data
+	      );
+	    }
+	  }]);
+
+	  return Sign;
 	}(_react.Component);
 
-	exports.default = Sign;
+	var mapState = function mapState(state) {
+	  return {
+	    verify: state.signed
+	  };
+	};
+
+	var mapDispatch = function mapDispatch(dispatch) {
+	  return {
+	    signOut: function signOut(bul) {
+	      dispatch((0, _sign.signOut)(bul));
+	    }
+	  };
+	};
+
+	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(Sign);
 
 /***/ },
 /* 270 */
@@ -28681,21 +28742,22 @@
 				var _this2 = this;
 
 				e.preventDefault();
+				var name = _reactDom2.default.findDOMNode(this.refs.name).value;
 				$.ajax({
 					method: 'POST',
 					url: '/verifyin',
 					data: {
-						name: _reactDom2.default.findDOMNode(this.refs.name).value,
+						name: name,
 						pass: _reactDom2.default.findDOMNode(this.refs.pass).value
 					}
 				}).then(function (res) {
-					_this2.props.goSigned(res);
+					_this2.props.goSigned(res, name);
 				});
 			}
 		}, {
 			key: 'componentWillReceiveProps',
 			value: function componentWillReceiveProps(nextProps) {
-				if (nextProps.sign.sign) _reactRouter.hashHistory.push('/');
+				if (nextProps.verify.sign) _reactRouter.hashHistory.push('/');
 			}
 		}, {
 			key: 'render',
@@ -28765,43 +28827,201 @@
 
 	var mapState = function mapState(state) {
 		return {
-			sign: state.signed
+			verify: state.signed
 		};
 	};
 
 	var mapDispatch = function mapDispatch(dispatch) {
 		return {
-			goSigned: function goSigned(bul) {
-				dispatch((0, _sign.goSigned)(bul));
+			goSigned: function goSigned(bul, name) {
+				dispatch((0, _sign.goSigned)(bul, name));
 			}
 		};
 	};
 
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(SignIn);
 
+	/*
+
+	let arr = [
+		{
+			id:1,
+			w:3,
+			h:4
+		},
+		{
+			id:2,
+			w:3,
+			h:5
+		},
+		{
+			id:3,
+			w:2,
+			h:5
+		},
+		{
+			id:4,
+			w:4,
+			h:6
+		},
+		{
+			id:5,
+			w:200,
+			h:400
+		},
+		{
+			id:6,
+			w:400,
+			h:200
+		}
+	]
+
+	let pics = []
+	let aa = [];
+	let result = [];
+
+	const getImage = (w,h) => {
+		arr.forEach(item => {
+			pics.push({
+				res:Math.abs(item.w - w) + Math.abs(item.h - h),
+				otnW:item.w / w,
+				otnH: item.h / h,
+				id: item.id
+			})	
+		})
+			let id = [];
+		aa = pics.reduce((cur, next) => {
+			if(cur.res < next.res && id.indexOf(cur.id) == -1){ 
+						result.push(cur)
+						id.push(cur.id)
+						return cur
+					}else if (cur.res == next.res && id.indexOf(next.id) == -1){
+						result.push(next)
+						id.push(next.id)
+						return next
+					}else if (cur.res > next.res && id.indexOf(next.id) == -1){
+						result.push(next)
+						id.push(next.id)
+						return next
+					}else
+					return cur
+
+		})
+		if(result.length> 1)
+		console.log(result.reduce((c,n) => {
+			if(c.otnW >= n.otnW && c.otnH>= n.otnH)
+				return c
+			else return n
+		}))
+		else console.log(result[0].id + ': - id of pictures')
+	}
+
+	getImage(500,25)*/
+
+	/*
+
+
+	let arr = [
+		{
+			id:1,
+			w:3,
+			h:4
+		},
+		{
+			id:2,
+			w:3,
+			h:5
+		},
+		{
+			id:3,
+			w:2,
+			h:5
+		},
+		{
+			id:4,
+			w:4,
+			h:6
+		}
+	]
+
+	let pics = []
+	let aa = [];
+
+	const getImage = (w,h) => {
+		arr.forEach(item => {
+			pics.push({
+				res:Math.abs(item.w - w) + Math.abs(item.h - h),
+				id: item.id
+			})	
+		})
+		console.log(pics)
+		aa = pics.reduce((cur, next) => {
+			if(cur.res <= next.res) return cur
+			else return next
+		})
+		console.log(aa)
+	}
+
+	getImage(4,5)
+	*/
+
 /***/ },
 /* 271 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	  value: true
 	});
 	exports.goSigned = goSigned;
 	exports.signOut = signOut;
-	function goSigned(tr) {
-		return {
-			type: 'signed',
-			payload: tr
-		};
+
+	var _store = __webpack_require__(276);
+
+	var _store2 = _interopRequireDefault(_store);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function goSigned(tr, name) {
+	  return {
+	    type: 'signed',
+	    payload: {
+	      sign: tr,
+	      name: name
+	    }
+	  };
 	}
-	function signOut(fa) {
-		return {
-			type: 'signOut',
-			payload: fa
-		};
+
+	function signOut() {
+	  return function (dispatch) {
+	    $.ajax({ url: '/signout' }).then(function (res) {
+	      console.log(res);
+	      if (res) dispatch({
+	        type: 'signOut',
+	        payload: {
+	          sign: false,
+	          name: null
+	        }
+	      });
+	    }).catch(function (err) {
+	      return console.log(err);
+	    });
+	  };
 	}
+
+	$.ajax({
+	  url: '/session',
+	  method: 'get'
+	}).then(function (res) {
+	  if (res) _store2.default.dispatch({
+	    type: 'signed',
+	    payload: {
+	      sign: true,
+	      name: res[0].name
+	    }
+	  });
+	});
 
 /***/ },
 /* 272 */
@@ -28813,97 +29033,148 @@
 		value: true
 	});
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	var _reactDom = __webpack_require__(32);
 
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var SignUp = function SignUp() {
-		return _react2.default.createElement(
-			'div',
-			null,
-			_react2.default.createElement(
-				'div',
-				{ className: 'container' },
-				_react2.default.createElement(
-					'form',
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SignUp = function (_Component) {
+		_inherits(SignUp, _Component);
+
+		function SignUp() {
+			_classCallCheck(this, SignUp);
+
+			return _possibleConstructorReturn(this, (SignUp.__proto__ || Object.getPrototypeOf(SignUp)).apply(this, arguments));
+		}
+
+		_createClass(SignUp, [{
+			key: 'onSubmit',
+			value: function onSubmit(e) {
+				e.preventDefault();
+
+				var name = _reactDom2.default.findDOMNode(this.refs.name).value,
+				    pass = _reactDom2.default.findDOMNode(this.refs.pass).value,
+				    cPass = _reactDom2.default.findDOMNode(this.refs.cPass).value,
+				    email = _reactDom2.default.findDOMNode(this.refs.email).value;
+				$.ajax({
+					method: 'post',
+					url: '/register',
+					data: {
+						name: name,
+						pass: pass,
+						cPass: cPass,
+						email: email
+					}
+				}).then(function (res) {
+					return console.log(res);
+				});
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				var _this2 = this;
+
+				return _react2.default.createElement(
+					'div',
 					null,
 					_react2.default.createElement(
 						'div',
-						{ className: 'form-group row' },
+						{ className: 'container' },
 						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'inputEmail3', className: 'col-sm-2 col-form-label' },
-							'login'
-						),
-						_react2.default.createElement(
-							'div',
-							{ className: 'col-sm-10' },
-							_react2.default.createElement('input', { type: 'email', className: 'form-control', id: 'inputEmail3', placeholder: 'login' })
-						)
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'form-group row' },
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'inputEmail3', className: 'col-sm-2 col-form-label' },
-							'e-mail'
-						),
-						_react2.default.createElement(
-							'div',
-							{ className: 'col-sm-10' },
-							_react2.default.createElement('input', { type: 'email', className: 'form-control', id: 'inputEmail3', placeholder: 'e-mail' })
-						)
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'form-group row' },
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'inputPassword3', className: 'col-sm-2 col-form-label' },
-							'Password'
-						),
-						_react2.default.createElement(
-							'div',
-							{ className: 'col-sm-10' },
-							_react2.default.createElement('input', { type: 'password', className: 'form-control', id: 'inputPassword3', placeholder: 'Password' })
-						)
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'form-group row' },
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'inputPassword3', className: 'col-sm-2 col-form-label' },
-							'confirm password'
-						),
-						_react2.default.createElement(
-							'div',
-							{ className: 'col-sm-10' },
-							_react2.default.createElement('input', { type: 'password', className: 'form-control', id: 'inputPassword3', placeholder: 'confirm password' })
-						)
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'form-group row' },
-						_react2.default.createElement(
-							'div',
-							{ className: 'offset-sm-2 col-sm-10' },
+							'form',
+							null,
 							_react2.default.createElement(
-								'button',
-								{ type: 'submit', className: 'btn btn-primary' },
-								'Sign in'
+								'div',
+								{ className: 'form-group row' },
+								_react2.default.createElement(
+									'label',
+									{ htmlFor: 'inputEmail3', className: 'col-sm-2 col-form-label' },
+									'login'
+								),
+								_react2.default.createElement(
+									'div',
+									{ className: 'col-sm-10' },
+									_react2.default.createElement('input', { ref: 'name', type: 'email', className: 'form-control', id: 'inputEmail3', placeholder: 'login' })
+								)
+							),
+							_react2.default.createElement(
+								'div',
+								{ className: 'form-group row' },
+								_react2.default.createElement(
+									'label',
+									{ htmlFor: 'inputEmail3', className: 'col-sm-2 col-form-label' },
+									'e-mail'
+								),
+								_react2.default.createElement(
+									'div',
+									{ className: 'col-sm-10' },
+									_react2.default.createElement('input', { ref: 'email', type: 'email', className: 'form-control', id: 'inputEmail3', placeholder: 'e-mail' })
+								)
+							),
+							_react2.default.createElement(
+								'div',
+								{ className: 'form-group row' },
+								_react2.default.createElement(
+									'label',
+									{ htmlFor: 'inputPassword3', className: 'col-sm-2 col-form-label' },
+									'Password'
+								),
+								_react2.default.createElement(
+									'div',
+									{ className: 'col-sm-10' },
+									_react2.default.createElement('input', { ref: 'pass', type: 'password', className: 'form-control', id: 'inputPassword3', placeholder: 'Password' })
+								)
+							),
+							_react2.default.createElement(
+								'div',
+								{ className: 'form-group row' },
+								_react2.default.createElement(
+									'label',
+									{ htmlFor: 'inputPassword3', className: 'col-sm-2 col-form-label' },
+									'confirm password'
+								),
+								_react2.default.createElement(
+									'div',
+									{ className: 'col-sm-10' },
+									_react2.default.createElement('input', { ref: 'cPass', type: 'password', className: 'form-control', id: 'inputPassword3', placeholder: 'confirm password' })
+								)
+							),
+							_react2.default.createElement(
+								'div',
+								{ className: 'form-group row' },
+								_react2.default.createElement(
+									'div',
+									{ className: 'offset-sm-2 col-sm-10' },
+									_react2.default.createElement(
+										'button',
+										{ onClick: function onClick(e) {
+												return _this2.onSubmit(e);
+											}, type: 'submit', className: 'btn btn-primary' },
+										'Sign in'
+									)
+								)
 							)
 						)
 					)
-				)
-			)
-		);
-	};
+				);
+			}
+		}]);
+
+		return SignUp;
+	}(_react.Component);
 
 	exports.default = SignUp;
 
@@ -29251,11 +29522,12 @@
 		switch (action.type) {
 			case 'signed':
 				state = _extends({}, state, {
-					sign: action.payload
+					sign: action.payload.sign,
+					name: action.payload.name
 				});break;
 			case 'signOut':
 				state = _extends({}, state, {
-					sign: false
+					sign: action.payload.sign
 				});break;
 		}
 		return state;
