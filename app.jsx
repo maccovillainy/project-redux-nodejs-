@@ -10,6 +10,7 @@ import SignIn from './components/signIn.jsx'
 import SignUp from './components/signUp.jsx'
 import Main from './components/main.jsx'
 import Blog from './components/blog.jsx'
+import EndOfReg from './components/EndOfReg.jsx'
 
 import store from "./store.jsx"
 class App extends Component{
@@ -35,6 +36,7 @@ render(
 				<Route path='signin' component={SignIn} />
 				<Route path='signup' component={SignUp} />
 				<Route path='blog' component={Blog} />
+				<Route path='user/:id' component={EndOfReg} />
 			</Route>
 		</Router>
 	</Provider>

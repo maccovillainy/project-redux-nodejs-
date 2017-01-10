@@ -1,6 +1,4 @@
-
-
-const signed = (state = {sign: false}, action) => {
+const signed = (state = {sign: null}, action) => {
 	switch (action.type) {
 		case 'signed':
 			state = {

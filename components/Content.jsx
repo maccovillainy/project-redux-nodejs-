@@ -6,7 +6,7 @@ export default class Content extends Component{
 		return(
 			<main className='container' >
 				<div className='row'>
-					<div className="card col-md-3" >
+					<div style={{border: 0}} className="card col-md-3 " >
 						<div className="card" >
 						  <img style={{height: 200}} className="card-img-top" src="http://placehold.it/400x600" alt="Card image cap" />
 						  <div className="card-block">
@@ -16,7 +16,7 @@ export default class Content extends Component{
 						  </div>
 						</div>
 					</div>
-					<div className="card col-md-3" >
+					<div style={{border: 0}} className="card col-md-3" >
 						<div className="card" >
 						  <img style={{height: 200}} className="card-img-top" src="http://placehold.it/400x600" alt="Card image cap" />
 						  <div className="card-block">
@@ -26,7 +26,7 @@ export default class Content extends Component{
 						  </div>
 						</div>
 					</div>
-					<div className="card col-md-3" >
+					<div style={{border: 0}} className="card col-md-3" >
 						<div className="card" >
 						  <img style={{height: 200}} className="card-img-top" src="http://placehold.it/400x600" alt="Card image cap" />
 						  <div className="card-block">
@@ -36,7 +36,7 @@ export default class Content extends Component{
 						  </div>
 						</div>
 					</div>
-					<div className="card col-md-3" >
+					<div style={{border: 0}} className="card col-md-3" >
 						<div className="card" >
 						  <img style={{height: 200}} className="card-img-top" src="http://placehold.it/400x600" alt="Card image cap" />
 						  <div className="card-block">

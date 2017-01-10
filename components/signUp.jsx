@@ -2,7 +2,12 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { render } from 'react-dom'
 
-export default class SignUp extends Component {
+import { connect } from 'react-redux'
+import { hashHistory } from 'react-router'
+
+import { register } from '../actions/sign.jsx'
+
+class SignUp extends Component {
 	onSubmit(e){
 		e.preventDefault();
 
@@ -19,11 +24,47 @@ export default class SignUp extends Component {
 				cPass,
 				email
 			}
-		}).then(res => console.log(res))
+		}).then(res => {
+			console.log(res.register)
+			let existName = false,
+				existEmail = false,
+				nameInalid = false,
+				passInvalid = res.password,
+				errors  = res.body,
+				reg = res.register;
+				this.props.register(existName, existEmail, nameInalid, passInvalid, errors,reg)
+		})
+	}
+	componentWillReceiveProps(nextProps) {
+		//console.log(nextProps)
 	}
 	render(){
+					let data = [], pass = '', success = '';
+					if (this.props.verify.errors){
+						data = this.props.verify.errors.map((item, i) => (
+													<div key={i}>
+														<p>
+															<strong className='text-danger' >{item.param}: </strong>
+															<em className='text-danger' >{item.msg}</em>
+														</p>
+													</div>))
+				}
+				if (this.props.verify.passInvalid){
+					pass = <strong className='text-danger' >incorrect data password</strong>
+				} 
+				console.log(this.props.verify.register)
+				if (this.props.verify.register){
+					success = <p className='text-syccess'>Registration success! We send verify message on your e-mail, please go to verify link in this message</p>
+					setTimeout(() => {
+						this.props.register(false,false,false,false,false)
+						hashHistory.push('/')
+					}, 3000)
+				}
 		return (
 			<div>
+				{data}
+				{pass}
+				{success}
 				<div className="container">
 				  <form>
 				    <div className="form-group row">
@@ -61,3 +102,20 @@ export default class SignUp extends Component {
 		)
 	}
 }
+
+
+const mapState = (state) => {
+	return {
+		verify: state.register
+	}
+}
+
+const mapDispatch = (dispatch) => {
+	return {
+		register: (existName, existEmail, nameInalid, passInvalid, errors, reg) => {
+			dispatch(register(existName, existEmail, nameInalid, passInvalid, errors, reg))
+		}
+	}
+}
+
+export default connect(mapState, mapDispatch)(SignUp)

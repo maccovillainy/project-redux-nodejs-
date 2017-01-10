@@ -11,6 +11,34 @@ export function goSigned(tr, name){
 }
 
 
+export function register(existName,
+  existEmail,
+  nameInalid,
+  passInvalid,
+  errors,
+  register){
+  return {
+    type: 'REGISTER',
+    payload: {
+      existName,
+      existEmail,
+      nameInalid,
+      passInvalid,
+      errors,
+      register
+    }
+  }
+}
+
+
+export function end(bul){
+  return {
+    type: 'END',
+    payload: bul
+    }
+  }
+
+
 
 
 export function signOut(){
@@ -21,7 +49,7 @@ export function signOut(){
       dispatch({
         type: 'signOut',
         payload: {
-          sign: false,
+          sign: null,
           name: null
         }
       })

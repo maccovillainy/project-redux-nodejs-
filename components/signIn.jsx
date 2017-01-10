@@ -26,8 +26,16 @@ class SignIn extends Component {
 		if(nextProps.verify.sign) hashHistory.push('/')
 	}
 	render(){
+		console.log(this.props.verify.sign)
+		let data;
+		switch (this.props.verify.sign){
+			case null: data = '';break;
+			case false:data =  <p className='text-danger'>Wrong login or password!</p>;break;
+			case true:data =  'sign success';break;
+		}
 		return (
 			<div>
+				{data}
 				<div className="container">
 				  <form>
 				    <div className="form-group row">
