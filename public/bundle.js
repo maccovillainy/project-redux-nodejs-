@@ -64,25 +64,29 @@
 
 	var _sign2 = _interopRequireDefault(_sign);
 
-	var _signIn = __webpack_require__(274);
+	var _signIn = __webpack_require__(276);
 
 	var _signIn2 = _interopRequireDefault(_signIn);
 
-	var _signUp = __webpack_require__(275);
+	var _signUp = __webpack_require__(277);
 
 	var _signUp2 = _interopRequireDefault(_signUp);
 
-	var _main = __webpack_require__(276);
+	var _main = __webpack_require__(278);
 
 	var _main2 = _interopRequireDefault(_main);
 
-	var _blog = __webpack_require__(278);
+	var _blog = __webpack_require__(280);
 
 	var _blog2 = _interopRequireDefault(_blog);
 
-	var _EndOfReg = __webpack_require__(280);
+	var _EndOfReg = __webpack_require__(281);
 
 	var _EndOfReg2 = _interopRequireDefault(_EndOfReg);
+
+	var _addBlog = __webpack_require__(282);
+
+	var _addBlog2 = _interopRequireDefault(_addBlog);
 
 	var _store = __webpack_require__(271);
 
@@ -142,7 +146,8 @@
 				_react2.default.createElement(_reactRouter.Route, { path: 'signin', component: _signIn2.default }),
 				_react2.default.createElement(_reactRouter.Route, { path: 'signup', component: _signUp2.default }),
 				_react2.default.createElement(_reactRouter.Route, { path: 'blog', component: _blog2.default }),
-				_react2.default.createElement(_reactRouter.Route, { path: 'user/:id', component: _EndOfReg2.default })
+				_react2.default.createElement(_reactRouter.Route, { path: 'user/:id', component: _EndOfReg2.default }),
+				_react2.default.createElement(_reactRouter.Route, { path: 'addblog', component: _addBlog2.default })
 			)
 		)
 	), root);
@@ -28638,20 +28643,29 @@
 	      if (this.props.verify.sign) {
 	        data = _react2.default.createElement(
 	          'div',
-	          { className: 'row align-items-center  justify-content-end' },
+	          { className: 'container clearfix' },
 	          _react2.default.createElement(
-	            'h2',
-	            null,
-	            'Welcome, ',
-	            this.props.verify.name,
-	            '! '
+	            'div',
+	            { className: 'row align-items-center  justify-content-end' },
+	            _react2.default.createElement(
+	              'h2',
+	              null,
+	              'Welcome, ',
+	              this.props.verify.name,
+	              '! '
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: function onClick() {
+	                  return _this2.props.signOut();
+	                }, className: 'btn btn-secondary btn-sm ml-2' },
+	              'SIGN OUT'
+	            )
 	          ),
 	          _react2.default.createElement(
-	            'button',
-	            { onClick: function onClick() {
-	                return _this2.props.signOut();
-	              }, className: 'btn btn-secondary btn-sm ml-2' },
-	            'SIGN OUT'
+	            _reactRouter.Link,
+	            { className: 'btn btn-info m-3 float-right', to: '/addblog' },
+	            'add new blog'
 	          )
 	        );
 	      } else {
@@ -28795,15 +28809,15 @@
 
 	var _signed2 = _interopRequireDefault(_signed);
 
-	var _register = __webpack_require__(279);
+	var _register = __webpack_require__(273);
 
 	var _register2 = _interopRequireDefault(_register);
 
-	var _end = __webpack_require__(281);
+	var _end = __webpack_require__(274);
 
 	var _end2 = _interopRequireDefault(_end);
 
-	var _reduxThunk = __webpack_require__(273);
+	var _reduxThunk = __webpack_require__(275);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
@@ -28853,6 +28867,72 @@
 
 	'use strict';
 
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var register = function register() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+	    existName: false,
+	    existEmail: false,
+	    nameInalid: false,
+	    passInvalid: false,
+	    errors: false,
+	    register: false
+	  };
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case 'REGISTER':
+	      state = _extends({}, state, {
+	        existName: action.payload.existName,
+	        existEmail: action.payload.existEmail,
+	        nameInalid: action.payload.nameInalid,
+	        passInvalid: action.payload.passInvalid,
+	        errors: action.payload.errors,
+	        register: action.payload.register
+	      });break;
+	  }
+	  return state;
+	};
+
+	exports.default = register;
+
+/***/ },
+/* 274 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var ENDend = function ENDend() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { finish: false };
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case 'END':
+	      state = _extends({}, state, {
+	        finish: action.payload
+	      });break;
+	  }
+	  return state;
+	};
+
+	exports.default = ENDend;
+
+/***/ },
+/* 275 */
+/***/ function(module, exports) {
+
+	'use strict';
+
 	exports.__esModule = true;
 	function createThunkMiddleware(extraArgument) {
 	  return function (_ref) {
@@ -28876,7 +28956,7 @@
 	exports['default'] = thunk;
 
 /***/ },
-/* 274 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29163,7 +29243,7 @@
 	*/
 
 /***/ },
-/* 275 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29283,7 +29363,7 @@
 				if (this.props.verify.register) {
 					success = _react2.default.createElement(
 						'p',
-						{ className: 'text-syccess' },
+						{ className: 'text-success' },
 						'Registration success! We send verify message on your e-mail, please go to verify link in this message'
 					);
 					setTimeout(function () {
@@ -29400,7 +29480,7 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(SignUp);
 
 /***/ },
-/* 276 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29423,11 +29503,11 @@
 
 	var _sign2 = _interopRequireDefault(_sign);
 
-	var _signIn = __webpack_require__(274);
+	var _signIn = __webpack_require__(276);
 
 	var _signIn2 = _interopRequireDefault(_signIn);
 
-	var _Content = __webpack_require__(277);
+	var _Content = __webpack_require__(279);
 
 	var _Content2 = _interopRequireDefault(_Content);
 
@@ -29470,7 +29550,7 @@
 	exports.default = Main;
 
 /***/ },
-/* 277 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29636,7 +29716,7 @@
 	exports.default = Content;
 
 /***/ },
-/* 278 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29699,46 +29779,7 @@
 	exports.default = Blog;
 
 /***/ },
-/* 279 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var register = function register() {
-	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-	    existName: false,
-	    existEmail: false,
-	    nameInalid: false,
-	    passInvalid: false,
-	    errors: false,
-	    register: false
-	  };
-	  var action = arguments[1];
-
-	  switch (action.type) {
-	    case 'REGISTER':
-	      state = _extends({}, state, {
-	        existName: action.payload.existName,
-	        existEmail: action.payload.existEmail,
-	        nameInalid: action.payload.nameInalid,
-	        passInvalid: action.payload.passInvalid,
-	        errors: action.payload.errors,
-	        register: action.payload.register
-	      });break;
-	  }
-	  return state;
-	};
-
-	exports.default = register;
-
-/***/ },
-/* 280 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29787,6 +29828,9 @@
 	        data: { url: this.props.params.id }
 	      }).then(function (res) {
 	        _this2.props.end(res);
+	        if (res) setTimeout(function () {
+	          _reactRouter.hashHistory.push('/');
+	        }, 3000);
 	      });
 	    }
 	  }, {
@@ -29830,8 +29874,8 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(EndOfReg);
 
 /***/ },
-/* 281 */
-/***/ function(module, exports) {
+/* 282 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -29839,22 +29883,114 @@
 	  value: true
 	});
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var ENDend = function ENDend() {
-	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { finish: false };
-	  var action = arguments[1];
+	var _react = __webpack_require__(1);
 
-	  switch (action.type) {
-	    case 'END':
-	      state = _extends({}, state, {
-	        finish: action.payload
-	      });break;
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(32);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var AddBlock = function (_Component) {
+	  _inherits(AddBlock, _Component);
+
+	  function AddBlock() {
+	    _classCallCheck(this, AddBlock);
+
+	    return _possibleConstructorReturn(this, (AddBlock.__proto__ || Object.getPrototypeOf(AddBlock)).apply(this, arguments));
 	  }
-	  return state;
-	};
 
-	exports.default = ENDend;
+	  _createClass(AddBlock, [{
+	    key: 'add',
+	    value: function add(e) {
+	      e.preventDefault();
+	      var name = _reactDom2.default.findDOMNode(this.refs.name).value,
+	          text = _reactDom2.default.findDOMNode(this.refs.text).value,
+	          date = new Date();
+	      $.ajax({
+	        method: 'post',
+	        url: '/addnewblog',
+	        data: {
+	          name: name, text: text, date: date
+	        }
+	      }).then(function (res) {
+	        return console.log(res);
+	      }).catch(function (err) {
+	        return console.log(err);
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'container' },
+	        _react2.default.createElement(
+	          'form',
+	          null,
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-group' },
+	            _react2.default.createElement(
+	              'label',
+	              { htmlFor: 'Name' },
+	              'Name of your article'
+	            ),
+	            _react2.default.createElement('input', { ref: 'name', type: 'text', className: 'form-control', id: 'Name', 'aria-describedby': 'emailHelp', placeholder: 'Name of your article' })
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-group' },
+	            _react2.default.createElement(
+	              'label',
+	              { htmlFor: 'exampleTextarea' },
+	              'Text of your article'
+	            ),
+	            _react2.default.createElement('textarea', { ref: 'text', className: 'form-control', id: 'exampleTextarea', rows: '15' })
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-group' },
+	            _react2.default.createElement(
+	              'label',
+	              { htmlFor: 'exampleInputFile' },
+	              'File input'
+	            ),
+	            _react2.default.createElement('input', { accept: 'image/jpeg,image/png,image/gif', type: 'file', className: 'form-control-file', id: 'exampleInputFile', 'aria-describedby': 'fileHelp' }),
+	            _react2.default.createElement(
+	              'small',
+	              { id: 'fileHelp', className: 'form-text text-muted' },
+	              'Choose picture htmlFor blog'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: function onClick(e) {
+	                return _this2.add(e);
+	              }, type: 'submit', className: 'btn btn-primary' },
+	            'Submit'
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return AddBlock;
+	}(_react.Component);
+
+	exports.default = AddBlock;
 
 /***/ }
 /******/ ]);

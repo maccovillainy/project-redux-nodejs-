@@ -10,9 +10,12 @@ class Sign extends Component {
     let data;
     if(this.props.verify.sign){
       data = (
-      <div className='row align-items-center  justify-content-end'> 
-        <h2>Welcome, {this.props.verify.name}! </h2>
-        <button onClick={() => this.props.signOut()} className='btn btn-secondary btn-sm ml-2'>SIGN OUT</button>
+      <div className='container clearfix'>
+        <div className='row align-items-center  justify-content-end'> 
+          <h2>Welcome, {this.props.verify.name}! </h2>
+          <button onClick={() => this.props.signOut()} className='btn btn-secondary btn-sm ml-2'>SIGN OUT</button>
+        </div>
+            <Link className='btn btn-info m-3 float-right' to='/addblog'>add new blog</Link>
       </div>
       )
     }else{

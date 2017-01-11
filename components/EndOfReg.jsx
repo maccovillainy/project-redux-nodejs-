@@ -12,6 +12,7 @@ import { end } from '../actions/sign.jsx'
       data: {url:this.props.params.id}
     }).then(res => {
         this.props.end(res)
+        if (res) setTimeout(() => {hashHistory.push('/')}, 3000)
     })
   }
   render(){

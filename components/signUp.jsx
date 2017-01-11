@@ -54,7 +54,7 @@ class SignUp extends Component {
 				} 
 				console.log(this.props.verify.register)
 				if (this.props.verify.register){
-					success = <p className='text-syccess'>Registration success! We send verify message on your e-mail, please go to verify link in this message</p>
+					success = <p className='text-success'>Registration success! We send verify message on your e-mail, please go to verify link in this message</p>
 					setTimeout(() => {
 						this.props.register(false,false,false,false,false)
 						hashHistory.push('/')

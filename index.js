@@ -38,7 +38,20 @@ let userDataSchema = new Schema(
 	}
 )
 
+let blogsDataSchema = new Schema(
+	{
+		name: String,
+		text: String,
+		author: String,
+		date: String 
+	},
+	{
+		collection: 'blogs'
+	}
+)
+
 let UserData = mongoose.model('UserData', userDataSchema)
+let BlogData = mongoose.model('BlogData', blogsDataSchema)
 
 //UserData.findOneAndRemove({name: 'admin'}).exec()
 
@@ -59,7 +72,7 @@ UserData.find((err, data) => {
 
 
 
-//UserData.findOneAndUpdate({name: 'admin'}, {pass: '1', verify: true}).exec()
+//UserData.findOneAndUpdate({name: 'admin'}, {verifyLink: 'link'}).exec()
 
 /*	let data = {
 		name: "admin",
@@ -127,7 +140,6 @@ app.get('/', (req, res) =>{
 }) 
 
 app.get('/session', (req, res) => {
-	console.log(req.session.userName)
 	if (req.session.userName){
 		UserData.find({name : req.session.userName}, (err, data) => {
 			res.send(data)
@@ -220,7 +232,33 @@ app.post('/register', (req, res) => {
 	})
 
 app.put('/andOfReg', (req, res) => {
-	console.log(req.body.url)
+	UserData.findOneAndUpdate({verifyLink: `http://localhost:3000/#/user/${req.body.url}`}, {verify: true}).exec()
+	UserData.find({verifyLink: `http://localhost:3000/#/user/${req.body.url}`}, (err, data) => {
+		res.send(data[0].verify)
+	})
+})
+
+app.post('/addnewblog', (req, res) => {
+	if(req.session.userName){
+		let name = req.body.name,
+			text = req.body.text,
+			date = req.body.date,
+			author = req.session.userName;
+		BlogData.find({name: name}, (err, data) => {
+			if(!data.length){
+				new BlogData({name,text,date,author}).save()
+				let arr;
+				UserData.find({name: author}, (err, doc)=> {
+					arr = doc[0].blogs.map(i=>i)
+					arr.push(name)
+					UserData.findOneAndUpdate({name: author}, {blogs: arr}).exec()
+				})
+			}
+		UserData.find({name: 'admin'}, (err, data) => {
+			res.send(data[0].blogs)
+		})
+		})
+	}
 })
 
 // пользовательская страница 404
