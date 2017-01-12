@@ -31,6 +31,14 @@ export function register(existName,
 }
 
 
+export function getData(data){
+  return {
+    type: 'CONTENT',
+    payload: data
+    }
+  }
+
+
 export function end(bul){
   return {
     type: 'END',

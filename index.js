@@ -68,6 +68,7 @@ UserData.find((err, data) => {
 		blogs: []
 	}).save()
 })
+BlogData.find((err, data) => {console.log(data)})
 
 
 
@@ -249,16 +250,28 @@ app.post('/addnewblog', (req, res) => {
 				new BlogData({name,text,date,author}).save()
 				let arr;
 				UserData.find({name: author}, (err, doc)=> {
-					arr = doc[0].blogs.map(i=>i)
+					arr = [...doc[0].blogs]
 					arr.push(name)
 					UserData.findOneAndUpdate({name: author}, {blogs: arr}).exec()
+					res.send(true)
 				})
 			}
-		UserData.find({name: 'admin'}, (err, data) => {
-			res.send(data[0].blogs)
-		})
 		})
 	}
+})
+
+app.get('/getcontent', (req, res) => {
+	BlogData.find((err, data) => {
+		res.send(data)
+	})
+})
+
+app.post('/getblog', (req, res) => {
+	let name = req.body.name;
+	console.log(name)
+	BlogData.find({name: name},(err, data) => {
+		res.send(data[0])
+	})
 })
 
 // пользовательская страница 404

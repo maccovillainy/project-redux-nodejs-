@@ -1,6 +1,19 @@
 import React, { Component } from 'react'
 
 export default class Blog extends Component{
+	componentWillMount() {
+		console.log(this.props.params.name)
+		$.ajax({
+			method: 'post',
+			url: 'getblog',
+			data:{
+				name:this.props.params.name
+			}
+		}).then(res => {
+			console.log(res)
+		}).catch(err => console.log(err))
+		
+	}
 	render(){
 		return(
 			<main className='container' >

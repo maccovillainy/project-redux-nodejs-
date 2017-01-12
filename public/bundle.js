@@ -76,10 +76,6 @@
 
 	var _main2 = _interopRequireDefault(_main);
 
-	var _blog = __webpack_require__(280);
-
-	var _blog2 = _interopRequireDefault(_blog);
-
 	var _EndOfReg = __webpack_require__(281);
 
 	var _EndOfReg2 = _interopRequireDefault(_EndOfReg);
@@ -87,6 +83,10 @@
 	var _addBlog = __webpack_require__(282);
 
 	var _addBlog2 = _interopRequireDefault(_addBlog);
+
+	var _blog = __webpack_require__(280);
+
+	var _blog2 = _interopRequireDefault(_blog);
 
 	var _store = __webpack_require__(271);
 
@@ -145,9 +145,9 @@
 				_react2.default.createElement(_reactRouter.IndexRoute, { component: _main2.default }),
 				_react2.default.createElement(_reactRouter.Route, { path: 'signin', component: _signIn2.default }),
 				_react2.default.createElement(_reactRouter.Route, { path: 'signup', component: _signUp2.default }),
-				_react2.default.createElement(_reactRouter.Route, { path: 'blog', component: _blog2.default }),
 				_react2.default.createElement(_reactRouter.Route, { path: 'user/:id', component: _EndOfReg2.default }),
-				_react2.default.createElement(_reactRouter.Route, { path: 'addblog', component: _addBlog2.default })
+				_react2.default.createElement(_reactRouter.Route, { path: 'addblog', component: _addBlog2.default }),
+				_react2.default.createElement(_reactRouter.Route, { path: 'blog/:name', component: _blog2.default })
 			)
 		)
 	), root);
@@ -28723,6 +28723,7 @@
 	});
 	exports.goSigned = goSigned;
 	exports.register = register;
+	exports.getData = getData;
 	exports.end = end;
 	exports.signOut = signOut;
 
@@ -28753,6 +28754,13 @@
 	      errors: errors,
 	      register: register
 	    }
+	  };
+	}
+
+	function getData(data) {
+	  return {
+	    type: 'CONTENT',
+	    payload: data
 	  };
 	}
 
@@ -28805,6 +28813,10 @@
 
 	var _redux = __webpack_require__(242);
 
+	var _reduxThunk = __webpack_require__(275);
+
+	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
 	var _signed = __webpack_require__(272);
 
 	var _signed2 = _interopRequireDefault(_signed);
@@ -28817,16 +28829,17 @@
 
 	var _end2 = _interopRequireDefault(_end);
 
-	var _reduxThunk = __webpack_require__(275);
+	var _content = __webpack_require__(283);
 
-	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+	var _content2 = _interopRequireDefault(_content);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = (0, _redux.createStore)((0, _redux.combineReducers)({
 		signed: _signed2.default,
 		register: _register2.default,
-		ENDend: _end2.default
+		ENDend: _end2.default,
+		content: _content2.default
 	}), {}, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 
 /***/ },
@@ -29567,6 +29580,14 @@
 
 	var _reactRouter = __webpack_require__(178);
 
+	var _reactRedux = __webpack_require__(233);
+
+	var _sign = __webpack_require__(270);
+
+	var _blog = __webpack_require__(280);
+
+	var _blog2 = _interopRequireDefault(_blog);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -29585,126 +29606,63 @@
 		}
 
 		_createClass(Content, [{
+			key: 'componentWillMount',
+			value: function componentWillMount() {
+				var _this2 = this;
+
+				$.ajax({ url: 'getcontent' }).then(function (res) {
+					_this2.props.getData(res);
+				}).catch(function (err) {
+					return console.log(err);
+				});
+			}
+		}, {
 			key: 'render',
 			value: function render() {
+				var blogs = void 0;
+				if (this.props.data.length) {
+					blogs = this.props.data.map(function (item) {
+						var link = "/blog/" + item.name;
+						return _react2.default.createElement(
+							'div',
+							{ key: item._id, style: { border: 0 }, className: 'card col-md-3 ' },
+							_react2.default.createElement(
+								'div',
+								{ className: 'card' },
+								_react2.default.createElement('img', { style: { height: 200 }, className: 'card-img-top', src: 'http://placehold.it/400x600', alt: 'Card image cap' }),
+								_react2.default.createElement(
+									'div',
+									{ className: 'card-block' },
+									_react2.default.createElement(
+										'h4',
+										{ className: 'card-title' },
+										item.name
+									),
+									_react2.default.createElement(
+										'p',
+										{ className: 'card-text' },
+										item.text.substring(0, 30),
+										'...'
+									),
+									_react2.default.createElement(
+										_reactRouter.Link,
+										{ to: link, className: 'btn btn-primary' },
+										'Read more..'
+									)
+								)
+							)
+						);
+					});
+				} else {
+					blogs = 'Блогов еще нет';
+				}
 				return _react2.default.createElement(
 					'main',
 					{ className: 'container' },
 					_react2.default.createElement(
 						'div',
 						{ className: 'row' },
-						_react2.default.createElement(
-							'div',
-							{ style: { border: 0 }, className: 'card col-md-3 ' },
-							_react2.default.createElement(
-								'div',
-								{ className: 'card' },
-								_react2.default.createElement('img', { style: { height: 200 }, className: 'card-img-top', src: 'http://placehold.it/400x600', alt: 'Card image cap' }),
-								_react2.default.createElement(
-									'div',
-									{ className: 'card-block' },
-									_react2.default.createElement(
-										'h4',
-										{ className: 'card-title' },
-										'Card title'
-									),
-									_react2.default.createElement(
-										'p',
-										{ className: 'card-text' },
-										'Some quick example text to build on the card title and make up the bulk of the cards content.'
-									),
-									_react2.default.createElement(
-										_reactRouter.Link,
-										{ to: '/blog', className: 'btn btn-primary' },
-										'Go somewhere'
-									)
-								)
-							)
-						),
-						_react2.default.createElement(
-							'div',
-							{ style: { border: 0 }, className: 'card col-md-3' },
-							_react2.default.createElement(
-								'div',
-								{ className: 'card' },
-								_react2.default.createElement('img', { style: { height: 200 }, className: 'card-img-top', src: 'http://placehold.it/400x600', alt: 'Card image cap' }),
-								_react2.default.createElement(
-									'div',
-									{ className: 'card-block' },
-									_react2.default.createElement(
-										'h4',
-										{ className: 'card-title' },
-										'Card title'
-									),
-									_react2.default.createElement(
-										'p',
-										{ className: 'card-text' },
-										'Some quick example text to build on the card title and make up the bulk of the cards content.'
-									),
-									_react2.default.createElement(
-										_reactRouter.Link,
-										{ to: '/blog', className: 'btn btn-primary' },
-										'Go somewhere'
-									)
-								)
-							)
-						),
-						_react2.default.createElement(
-							'div',
-							{ style: { border: 0 }, className: 'card col-md-3' },
-							_react2.default.createElement(
-								'div',
-								{ className: 'card' },
-								_react2.default.createElement('img', { style: { height: 200 }, className: 'card-img-top', src: 'http://placehold.it/400x600', alt: 'Card image cap' }),
-								_react2.default.createElement(
-									'div',
-									{ className: 'card-block' },
-									_react2.default.createElement(
-										'h4',
-										{ className: 'card-title' },
-										'Card title'
-									),
-									_react2.default.createElement(
-										'p',
-										{ className: 'card-text' },
-										'Some quick example text to build on the card title and make up the bulk of the cards content.'
-									),
-									_react2.default.createElement(
-										_reactRouter.Link,
-										{ to: '/blog', className: 'btn btn-primary' },
-										'Go somewhere'
-									)
-								)
-							)
-						),
-						_react2.default.createElement(
-							'div',
-							{ style: { border: 0 }, className: 'card col-md-3' },
-							_react2.default.createElement(
-								'div',
-								{ className: 'card' },
-								_react2.default.createElement('img', { style: { height: 200 }, className: 'card-img-top', src: 'http://placehold.it/400x600', alt: 'Card image cap' }),
-								_react2.default.createElement(
-									'div',
-									{ className: 'card-block' },
-									_react2.default.createElement(
-										'h4',
-										{ className: 'card-title' },
-										'Card title'
-									),
-									_react2.default.createElement(
-										'p',
-										{ className: 'card-text' },
-										'Some quick example text to build on the card title and make up the bulk of the cards content.'
-									),
-									_react2.default.createElement(
-										_reactRouter.Link,
-										{ to: '/blog', className: 'btn btn-primary' },
-										'Go somewhere'
-									)
-								)
-							)
-						)
+						blogs
 					)
 				);
 			}
@@ -29713,7 +29671,21 @@
 		return Content;
 	}(_react.Component);
 
-	exports.default = Content;
+	var mapState = function mapState(state) {
+		return {
+			data: state.content.data
+		};
+	};
+
+	var mapDispatch = function mapDispatch(dispatch) {
+		return {
+			getData: function getData(data) {
+				dispatch((0, _sign.getData)(data));
+			}
+		};
+	};
+
+	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(Content);
 
 /***/ },
 /* 280 */
@@ -29749,6 +29721,22 @@
 		}
 
 		_createClass(Blog, [{
+			key: 'componentWillMount',
+			value: function componentWillMount() {
+				console.log(this.props.params.name);
+				$.ajax({
+					method: 'post',
+					url: 'getblog',
+					data: {
+						name: this.props.params.name
+					}
+				}).then(function (res) {
+					console.log(res);
+				}).catch(function (err) {
+					return console.log(err);
+				});
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return _react2.default.createElement(
@@ -29991,6 +29979,33 @@
 	}(_react.Component);
 
 	exports.default = AddBlock;
+
+/***/ },
+/* 283 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var content = function content() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { data: [] };
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case 'CONTENT':
+	      state = _extends({}, state, {
+	        data: action.payload
+	      });break;
+	  }
+	  return state;
+	};
+
+	exports.default = content;
 
 /***/ }
 /******/ ]);
