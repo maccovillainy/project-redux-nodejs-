@@ -38,6 +38,13 @@ export function getData(data){
     }
   }
 
+export function setData(data){
+  return {
+    type: 'SET_DATA',
+    payload: data
+    }
+  }
+
 
 export function end(bul){
   return {

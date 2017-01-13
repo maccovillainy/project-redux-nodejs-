@@ -7,8 +7,10 @@ let expressValidator;
 expressValidator = require('express-validator');
 let expressSession = require('express-session')
 let app = express();
-
+let multiparty = require('multiparty');
 let nodemailer = require('nodemailer')
+var formData = require("express-form-data");
+
 
 let mongoose = require('mongoose')
 mongoose.Promise = global.Promise
@@ -123,6 +125,14 @@ app.use(expressSession({
 }))
 app.use(require('body-parser').urlencoded({ extended: true }));
 
+
+// parsing data with connect-multiparty. Result set on req.body and req.files
+app.use(formData.parse({}));
+// clear all empty files
+app.use(formData.format());
+
+// union body and files
+app.use(formData.union());
 app.use(expressValidator());
 
 app.use(express.static(__dirname + '/public'));
@@ -131,6 +141,12 @@ app.set('port', process.env.PORT || 3000);
 
 
 
+
+
+app.post('/upload', function(req, res, next){
+	console.log(req.body.image)
+	res.send(true)
+});
 
 app.get('/', (req, res) =>{
 	res.set('Content-Type', 'text/html');
@@ -240,6 +256,10 @@ app.put('/andOfReg', (req, res) => {
 })
 
 app.post('/addnewblog', (req, res) => {
+	var form = new multiparty.Form();
+	console.log(form)
+	console.log(req.body)
+	console.log(req.body.name)
 	if(req.session.userName){
 		let name = req.body.name,
 			text = req.body.text,

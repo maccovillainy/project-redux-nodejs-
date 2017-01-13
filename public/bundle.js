@@ -64,27 +64,27 @@
 
 	var _sign2 = _interopRequireDefault(_sign);
 
-	var _signIn = __webpack_require__(276);
+	var _signIn = __webpack_require__(277);
 
 	var _signIn2 = _interopRequireDefault(_signIn);
 
-	var _signUp = __webpack_require__(277);
+	var _signUp = __webpack_require__(278);
 
 	var _signUp2 = _interopRequireDefault(_signUp);
 
-	var _main = __webpack_require__(278);
+	var _main = __webpack_require__(279);
 
 	var _main2 = _interopRequireDefault(_main);
 
-	var _EndOfReg = __webpack_require__(281);
+	var _EndOfReg = __webpack_require__(282);
 
 	var _EndOfReg2 = _interopRequireDefault(_EndOfReg);
 
-	var _addBlog = __webpack_require__(282);
+	var _addBlog = __webpack_require__(283);
 
 	var _addBlog2 = _interopRequireDefault(_addBlog);
 
-	var _blog = __webpack_require__(280);
+	var _blog = __webpack_require__(281);
 
 	var _blog2 = _interopRequireDefault(_blog);
 
@@ -28724,6 +28724,7 @@
 	exports.goSigned = goSigned;
 	exports.register = register;
 	exports.getData = getData;
+	exports.setData = setData;
 	exports.end = end;
 	exports.signOut = signOut;
 
@@ -28760,6 +28761,13 @@
 	function getData(data) {
 	  return {
 	    type: 'CONTENT',
+	    payload: data
+	  };
+	}
+
+	function setData(data) {
+	  return {
+	    type: 'SET_DATA',
 	    payload: data
 	  };
 	}
@@ -28813,25 +28821,29 @@
 
 	var _redux = __webpack_require__(242);
 
-	var _reduxThunk = __webpack_require__(275);
+	var _reduxThunk = __webpack_require__(272);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _signed = __webpack_require__(272);
+	var _signed = __webpack_require__(273);
 
 	var _signed2 = _interopRequireDefault(_signed);
 
-	var _register = __webpack_require__(273);
+	var _register = __webpack_require__(274);
 
 	var _register2 = _interopRequireDefault(_register);
 
-	var _end = __webpack_require__(274);
+	var _end = __webpack_require__(275);
 
 	var _end2 = _interopRequireDefault(_end);
 
-	var _content = __webpack_require__(283);
+	var _content = __webpack_require__(276);
 
 	var _content2 = _interopRequireDefault(_content);
+
+	var _blog = __webpack_require__(284);
+
+	var _blog2 = _interopRequireDefault(_blog);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28839,11 +28851,40 @@
 		signed: _signed2.default,
 		register: _register2.default,
 		ENDend: _end2.default,
-		content: _content2.default
+		content: _content2.default,
+		blog: _blog2.default
 	}), {}, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 
 /***/ },
 /* 272 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	function createThunkMiddleware(extraArgument) {
+	  return function (_ref) {
+	    var dispatch = _ref.dispatch;
+	    var getState = _ref.getState;
+	    return function (next) {
+	      return function (action) {
+	        if (typeof action === 'function') {
+	          return action(dispatch, getState, extraArgument);
+	        }
+
+	        return next(action);
+	      };
+	    };
+	  };
+	}
+
+	var thunk = createThunkMiddleware();
+	thunk.withExtraArgument = createThunkMiddleware;
+
+	exports['default'] = thunk;
+
+/***/ },
+/* 273 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28875,7 +28916,7 @@
 	exports.default = signed;
 
 /***/ },
-/* 273 */
+/* 274 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28914,7 +28955,7 @@
 	exports.default = register;
 
 /***/ },
-/* 274 */
+/* 275 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28941,35 +28982,34 @@
 	exports.default = ENDend;
 
 /***/ },
-/* 275 */
+/* 276 */
 /***/ function(module, exports) {
 
 	'use strict';
 
-	exports.__esModule = true;
-	function createThunkMiddleware(extraArgument) {
-	  return function (_ref) {
-	    var dispatch = _ref.dispatch;
-	    var getState = _ref.getState;
-	    return function (next) {
-	      return function (action) {
-	        if (typeof action === 'function') {
-	          return action(dispatch, getState, extraArgument);
-	        }
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
-	        return next(action);
-	      };
-	    };
-	  };
-	}
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var thunk = createThunkMiddleware();
-	thunk.withExtraArgument = createThunkMiddleware;
+	var content = function content() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { data: [] };
+	  var action = arguments[1];
 
-	exports['default'] = thunk;
+	  switch (action.type) {
+	    case 'CONTENT':
+	      state = _extends({}, state, {
+	        data: action.payload
+	      });break;
+	  }
+	  return state;
+	};
+
+	exports.default = content;
 
 /***/ },
-/* 276 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29165,48 +29205,31 @@
 			h:200
 		}
 	]
-
-	let pics = []
-	let aa = [];
-	let result = [];
-
+	let res;
 	const getImage = (w,h) => {
-		arr.forEach(item => {
-			pics.push({
-				res:Math.abs(item.w - w) + Math.abs(item.h - h),
-				otnW:item.w / w,
-				otnH: item.h / h,
-				id: item.id
-			})	
-		})
-			let id = [];
-		aa = pics.reduce((cur, next) => {
-			if(cur.res < next.res && id.indexOf(cur.id) == -1){ 
-						result.push(cur)
-						id.push(cur.id)
-						return cur
-					}else if (cur.res == next.res && id.indexOf(next.id) == -1){
-						result.push(next)
-						id.push(next.id)
-						return next
-					}else if (cur.res > next.res && id.indexOf(next.id) == -1){
-						result.push(next)
-						id.push(next.id)
-						return next
-					}else
-					return cur
+		let k = w/h,
+		area = w*h;
+		let prev = 0;
+		if (k>1){
+			res = arr.filter(item => {
+				let space = item.w * item.h;
+				if (item.w/item.h > 1) {
+					if(Math.abs(area - space) < Math.abs(area - prev)){
+						prev = space
+						return item			
+					}
+				}
+			})
+		}else if(k<1){
 
-		})
-		if(result.length> 1)
-		console.log(result.reduce((c,n) => {
-			if(c.otnW >= n.otnW && c.otnH>= n.otnH)
-				return c
-			else return n
-		}))
-		else console.log(result[0].id + ': - id of pictures')
+		}else{
+
+		}
+		return res
 	}
-
-	getImage(500,25)*/
+	getImage(500,25)
+	console.log(prev)
+	*/
 
 	/*
 
@@ -29256,7 +29279,7 @@
 	*/
 
 /***/ },
-/* 277 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29493,7 +29516,7 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(SignUp);
 
 /***/ },
-/* 278 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29516,11 +29539,11 @@
 
 	var _sign2 = _interopRequireDefault(_sign);
 
-	var _signIn = __webpack_require__(276);
+	var _signIn = __webpack_require__(277);
 
 	var _signIn2 = _interopRequireDefault(_signIn);
 
-	var _Content = __webpack_require__(279);
+	var _Content = __webpack_require__(280);
 
 	var _Content2 = _interopRequireDefault(_Content);
 
@@ -29563,7 +29586,7 @@
 	exports.default = Main;
 
 /***/ },
-/* 279 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29584,7 +29607,7 @@
 
 	var _sign = __webpack_require__(270);
 
-	var _blog = __webpack_require__(280);
+	var _blog = __webpack_require__(281);
 
 	var _blog2 = _interopRequireDefault(_blog);
 
@@ -29688,7 +29711,7 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(Content);
 
 /***/ },
-/* 280 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29702,6 +29725,10 @@
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(233);
+
+	var _sign = __webpack_require__(270);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29723,6 +29750,8 @@
 		_createClass(Blog, [{
 			key: 'componentWillMount',
 			value: function componentWillMount() {
+				var _this2 = this;
+
 				console.log(this.props.params.name);
 				$.ajax({
 					method: 'post',
@@ -29731,7 +29760,7 @@
 						name: this.props.params.name
 					}
 				}).then(function (res) {
-					console.log(res);
+					_this2.props.setData(res);
 				}).catch(function (err) {
 					return console.log(err);
 				});
@@ -29739,24 +29768,38 @@
 		}, {
 			key: 'render',
 			value: function render() {
+				console.log(this.props.data);
+				console.log(Object.keys(this.props.data).length);
+				var data = void 0;
+				if (Object.keys(this.props.data).length) data = _react2.default.createElement(
+					'article',
+					null,
+					_react2.default.createElement(
+						'h4',
+						null,
+						this.props.data.name
+					),
+					_react2.default.createElement('img', { src: 'http://placehold.it/400x600', alt: 'Card image cap' }),
+					_react2.default.createElement(
+						'p',
+						null,
+						this.props.data.text
+					),
+					_react2.default.createElement(
+						'blockquote',
+						null,
+						this.props.data.author
+					),
+					_react2.default.createElement(
+						'p',
+						null,
+						this.props.data.date
+					)
+				);
 				return _react2.default.createElement(
 					'main',
 					{ className: 'container' },
-					_react2.default.createElement(
-						'div',
-						{ className: 'row' },
-						_react2.default.createElement('img', { src: 'http://placehold.it/400x600', alt: 'Card image cap' }),
-						_react2.default.createElement(
-							'h4',
-							null,
-							'Card title'
-						),
-						_react2.default.createElement(
-							'p',
-							null,
-							'Some quick example text to build on the card title and make up the bulk of the cards content.'
-						)
-					)
+					data
 				);
 			}
 		}]);
@@ -29764,10 +29807,24 @@
 		return Blog;
 	}(_react.Component);
 
-	exports.default = Blog;
+	var mapStateToProps = function mapStateToProps(state) {
+		return {
+			data: state.blog.data
+		};
+	};
+
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+		return {
+			setData: function setData(data) {
+				dispatch((0, _sign.setData)(data));
+			}
+		};
+	};
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Blog);
 
 /***/ },
-/* 281 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29862,7 +29919,7 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(EndOfReg);
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29870,6 +29927,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -29902,20 +29961,49 @@
 	    key: 'add',
 	    value: function add(e) {
 	      e.preventDefault();
-	      var name = _reactDom2.default.findDOMNode(this.refs.name).value,
-	          text = _reactDom2.default.findDOMNode(this.refs.text).value,
-	          date = new Date();
-	      $.ajax({
-	        method: 'post',
-	        url: '/addnewblog',
-	        data: {
-	          name: name, text: text, date: date
-	        }
+	      //let files = ReactDOM.findDOMNode(this.refs.file).value
+	      var file = this.refs.file.files[0];
+	      console.log(file);
+	      //data-url="/upload"
+	      /*    $('#fieldPhoto' ).fileupload({
+	              dataType: 'json',
+	              add: function(e, data){
+	                console.log(data.data)
+	                $.ajax({
+	                  method: 'post',
+	                  url: '/upload',
+	                  data
+	                })
+	              }
+	              })
+	      */
+	      console.log(typeof file === 'undefined' ? 'undefined' : _typeof(file));
+	      var data = new FormData();
+	      data.append('image', file);
+
+	      $.post({
+	        url: '/upload',
+	        processData: false,
+	        contentType: false,
+	        data: data
 	      }).then(function (res) {
 	        return console.log(res);
-	      }).catch(function (err) {
-	        return console.log(err);
 	      });
+	      /*let name = ReactDOM.findDOMNode(this.refs.name).value,
+	      text = ReactDOM.findDOMNode(this.refs.text).value,
+	      date = new Date();
+	        $.ajax({
+	        method: 'post', 
+	        url:'/addnewblog',
+	        cache: false,
+	        data:{
+	          dataFiles
+	        },
+	        dataType: 'json',
+	        processData: false,
+	       contentType: false
+	      }).then(res => console.log(res))
+	      .catch(err => console.log(err))*/
 	    }
 	  }, {
 	    key: 'render',
@@ -29956,7 +30044,7 @@
 	              { htmlFor: 'exampleInputFile' },
 	              'File input'
 	            ),
-	            _react2.default.createElement('input', { accept: 'image/jpeg,image/png,image/gif', type: 'file', className: 'form-control-file', id: 'exampleInputFile', 'aria-describedby': 'fileHelp' }),
+	            _react2.default.createElement('input', { ref: 'file', type: 'file', className: 'form-control', required: true, accept: 'image/*', id: 'fieldPhoto', multiple: true, name: 'photo' }),
 	            _react2.default.createElement(
 	              'small',
 	              { id: 'fileHelp', className: 'form-text text-muted' },
@@ -29981,7 +30069,7 @@
 	exports.default = AddBlock;
 
 /***/ },
-/* 283 */
+/* 284 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29992,12 +30080,12 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var content = function content() {
-	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { data: [] };
+	var blog = function blog() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { data: {} };
 	  var action = arguments[1];
 
 	  switch (action.type) {
-	    case 'CONTENT':
+	    case 'SET_DATA':
 	      state = _extends({}, state, {
 	        data: action.payload
 	      });break;
@@ -30005,7 +30093,7 @@
 	  return state;
 	};
 
-	exports.default = content;
+	exports.default = blog;
 
 /***/ }
 /******/ ]);

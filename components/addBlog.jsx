@@ -3,17 +3,47 @@ import ReactDOM from 'react-dom'
 export default class  AddBlock extends Component{
   add(e){
     e.preventDefault(); 
-    let name = ReactDOM.findDOMNode(this.refs.name).value,
+    //let files = ReactDOM.findDOMNode(this.refs.file).value
+    let file = this.refs.file.files[0]
+    console.log(file)
+    //data-url="/upload"
+/*    $('#fieldPhoto' ).fileupload({
+        dataType: 'json',
+        add: function(e, data){
+          console.log(data.data)
+          $.ajax({
+            method: 'post',
+            url: '/upload',
+            data
+          })
+        }
+        })
+*/
+    console.log(typeof file)
+    var data = new FormData();
+    data.append( 'image', file );
+
+    $.post({
+      url: '/upload',
+      processData: false,
+      contentType: false,
+      data
+    }).then(res => console.log(res))
+    /*let name = ReactDOM.findDOMNode(this.refs.name).value,
     text = ReactDOM.findDOMNode(this.refs.text).value,
     date = new Date();
       $.ajax({
       method: 'post', 
       url:'/addnewblog',
+      cache: false,
       data:{
-        name, text, date
-      }
+        dataFiles
+      },
+      dataType: 'json',
+      processData: false,
+     contentType: false
     }).then(res => console.log(res))
-    .catch(err => console.log(err))
+    .catch(err => console.log(err))*/
   }
   render(){
     return(
@@ -29,7 +59,7 @@ export default class  AddBlock extends Component{
           </div>
           <div className="form-group">
             <label htmlFor="exampleInputFile">File input</label>
-            <input accept='image/jpeg,image/png,image/gif' type="file" className="form-control-file" id="exampleInputFile" aria-describedby="fileHelp" />
+            <input  ref='file' type="file" className="form-control" required accept="image/*" id="fieldPhoto"  multiple name="photo" />
             <small id="fileHelp" className="form-text text-muted">Choose picture htmlFor blog</small>
           </div>
           <button onClick={(e)=> this.add(e)} type="submit" className="btn btn-primary">Submit</button>

@@ -112,48 +112,31 @@ let arr = [
 		h:200
 	}
 ]
-
-let pics = []
-let aa = [];
-let result = [];
-
+let res;
 const getImage = (w,h) => {
-	arr.forEach(item => {
-		pics.push({
-			res:Math.abs(item.w - w) + Math.abs(item.h - h),
-			otnW:item.w / w,
-			otnH: item.h / h,
-			id: item.id
-		})	
-	})
-		let id = [];
-	aa = pics.reduce((cur, next) => {
-		if(cur.res < next.res && id.indexOf(cur.id) == -1){ 
-					result.push(cur)
-					id.push(cur.id)
-					return cur
-				}else if (cur.res == next.res && id.indexOf(next.id) == -1){
-					result.push(next)
-					id.push(next.id)
-					return next
-				}else if (cur.res > next.res && id.indexOf(next.id) == -1){
-					result.push(next)
-					id.push(next.id)
-					return next
-				}else
-				return cur
+	let k = w/h,
+	area = w*h;
+	let prev = 0;
+	if (k>1){
+		res = arr.filter(item => {
+			let space = item.w * item.h;
+			if (item.w/item.h > 1) {
+				if(Math.abs(area - space) < Math.abs(area - prev)){
+					prev = space
+					return item			
+				}
+			}
+		})
+	}else if(k<1){
 
-	})
-	if(result.length> 1)
-	console.log(result.reduce((c,n) => {
-		if(c.otnW >= n.otnW && c.otnH>= n.otnH)
-			return c
-		else return n
-	}))
-	else console.log(result[0].id + ': - id of pictures')
+	}else{
+
+	}
+	return res
 }
-
-getImage(500,25)*/
+getImage(500,25)
+console.log(prev)
+*/
 
 /*
 
