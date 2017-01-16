@@ -45,6 +45,7 @@ let blogsDataSchema = new Schema(
 		name: String,
 		text: String,
 		author: String,
+		pic: String,
 		date: String 
 	},
 	{
@@ -59,7 +60,7 @@ let BlogData = mongoose.model('BlogData', blogsDataSchema)
 
 UserData.find((err, data) => {
 
-	console.log(data)
+	//console.log(data)
 	if (data.length) return
 	new UserData({
 		name: 'admin',
@@ -144,8 +145,20 @@ app.set('port', process.env.PORT || 3000);
 
 
 app.post('/upload', function(req, res, next){
-	console.log(req.body.image)
-	res.send(true)
+	console.log(req.body.image.path)
+	let date = new Date()
+	console.log(__dirname + '/public/img' + +date+'')
+	console.log( req.body.image.name.lastIndexOf('.'))
+	let reg = req.body.image.name.substr(req.body.image.name.lastIndexOf('.'))
+	console.log(__dirname+'/public/img/'+(+date)+reg)
+
+	console.log(req.body.image.path)
+	console.log(__dirname+'/public/img/'+(+date)+reg)
+	fs.rename(req.body.image.path, __dirname+'/public/img/'+(+date)+reg, (err, data)=> {
+		console.log(err)
+		console.log(data)
+	})
+	res.send(+date+reg)
 });
 
 app.get('/', (req, res) =>{
@@ -264,10 +277,11 @@ app.post('/addnewblog', (req, res) => {
 		let name = req.body.name,
 			text = req.body.text,
 			date = req.body.date,
+			pic = req.body.pic,
 			author = req.session.userName;
 		BlogData.find({name: name}, (err, data) => {
 			if(!data.length){
-				new BlogData({name,text,date,author}).save()
+				new BlogData({name,text,date,author,pic}).save()
 				let arr;
 				UserData.find({name: author}, (err, doc)=> {
 					arr = [...doc[0].blogs]

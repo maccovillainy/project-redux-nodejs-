@@ -28,22 +28,23 @@ export default class  AddBlock extends Component{
       processData: false,
       contentType: false,
       data
-    }).then(res => console.log(res))
-    /*let name = ReactDOM.findDOMNode(this.refs.name).value,
-    text = ReactDOM.findDOMNode(this.refs.text).value,
-    date = new Date();
-      $.ajax({
-      method: 'post', 
-      url:'/addnewblog',
-      cache: false,
-      data:{
-        dataFiles
-      },
-      dataType: 'json',
-      processData: false,
-     contentType: false
-    }).then(res => console.log(res))
-    .catch(err => console.log(err))*/
+    }).then(res => {
+      console.log(res)
+
+      let name = ReactDOM.findDOMNode(this.refs.name).value,
+      text = ReactDOM.findDOMNode(this.refs.text).value,
+      date = new Date(),
+      pic = res;
+        $.ajax({
+        method: 'post', 
+        url:'/addnewblog',
+        data:{
+          name,text,date,pic
+        }
+      }).then(res => console.log(res))
+      .catch(err => console.log(err))
+    })
+    
   }
   render(){
     return(

@@ -64,27 +64,27 @@
 
 	var _sign2 = _interopRequireDefault(_sign);
 
-	var _signIn = __webpack_require__(277);
+	var _signIn = __webpack_require__(278);
 
 	var _signIn2 = _interopRequireDefault(_signIn);
 
-	var _signUp = __webpack_require__(278);
+	var _signUp = __webpack_require__(279);
 
 	var _signUp2 = _interopRequireDefault(_signUp);
 
-	var _main = __webpack_require__(279);
+	var _main = __webpack_require__(280);
 
 	var _main2 = _interopRequireDefault(_main);
 
-	var _EndOfReg = __webpack_require__(282);
+	var _EndOfReg = __webpack_require__(283);
 
 	var _EndOfReg2 = _interopRequireDefault(_EndOfReg);
 
-	var _addBlog = __webpack_require__(283);
+	var _addBlog = __webpack_require__(284);
 
 	var _addBlog2 = _interopRequireDefault(_addBlog);
 
-	var _blog = __webpack_require__(281);
+	var _blog = __webpack_require__(282);
 
 	var _blog2 = _interopRequireDefault(_blog);
 
@@ -28841,7 +28841,7 @@
 
 	var _content2 = _interopRequireDefault(_content);
 
-	var _blog = __webpack_require__(284);
+	var _blog = __webpack_require__(277);
 
 	var _blog2 = _interopRequireDefault(_blog);
 
@@ -29010,6 +29010,33 @@
 
 /***/ },
 /* 277 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var blog = function blog() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { data: {} };
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case 'SET_DATA':
+	      state = _extends({}, state, {
+	        data: action.payload
+	      });break;
+	  }
+	  return state;
+	};
+
+	exports.default = blog;
+
+/***/ },
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29279,7 +29306,7 @@
 	*/
 
 /***/ },
-/* 278 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29516,7 +29543,7 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(SignUp);
 
 /***/ },
-/* 279 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29539,11 +29566,11 @@
 
 	var _sign2 = _interopRequireDefault(_sign);
 
-	var _signIn = __webpack_require__(277);
+	var _signIn = __webpack_require__(278);
 
 	var _signIn2 = _interopRequireDefault(_signIn);
 
-	var _Content = __webpack_require__(280);
+	var _Content = __webpack_require__(281);
 
 	var _Content2 = _interopRequireDefault(_Content);
 
@@ -29586,7 +29613,7 @@
 	exports.default = Main;
 
 /***/ },
-/* 280 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29607,7 +29634,7 @@
 
 	var _sign = __webpack_require__(270);
 
-	var _blog = __webpack_require__(281);
+	var _blog = __webpack_require__(282);
 
 	var _blog2 = _interopRequireDefault(_blog);
 
@@ -29711,7 +29738,7 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(Content);
 
 /***/ },
-/* 281 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29824,7 +29851,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Blog);
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29919,7 +29946,7 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(EndOfReg);
 
 /***/ },
-/* 283 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29960,6 +29987,8 @@
 	  _createClass(AddBlock, [{
 	    key: 'add',
 	    value: function add(e) {
+	      var _this2 = this;
+
 	      e.preventDefault();
 	      //let files = ReactDOM.findDOMNode(this.refs.file).value
 	      var file = this.refs.file.files[0];
@@ -29987,28 +30016,29 @@
 	        contentType: false,
 	        data: data
 	      }).then(function (res) {
-	        return console.log(res);
-	      });
-	      /*let name = ReactDOM.findDOMNode(this.refs.name).value,
-	      text = ReactDOM.findDOMNode(this.refs.text).value,
-	      date = new Date();
+	        console.log(res);
+
+	        var name = _reactDom2.default.findDOMNode(_this2.refs.name).value,
+	            text = _reactDom2.default.findDOMNode(_this2.refs.text).value,
+	            date = new Date(),
+	            pic = res;
 	        $.ajax({
-	        method: 'post', 
-	        url:'/addnewblog',
-	        cache: false,
-	        data:{
-	          dataFiles
-	        },
-	        dataType: 'json',
-	        processData: false,
-	       contentType: false
-	      }).then(res => console.log(res))
-	      .catch(err => console.log(err))*/
+	          method: 'post',
+	          url: '/addnewblog',
+	          data: {
+	            name: name, text: text, date: date, pic: pic
+	          }
+	        }).then(function (res) {
+	          return console.log(res);
+	        }).catch(function (err) {
+	          return console.log(err);
+	        });
+	      });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      return _react2.default.createElement(
 	        'div',
@@ -30054,7 +30084,7 @@
 	          _react2.default.createElement(
 	            'button',
 	            { onClick: function onClick(e) {
-	                return _this2.add(e);
+	                return _this3.add(e);
 	              }, type: 'submit', className: 'btn btn-primary' },
 	            'Submit'
 	          )
@@ -30067,33 +30097,6 @@
 	}(_react.Component);
 
 	exports.default = AddBlock;
-
-/***/ },
-/* 284 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var blog = function blog() {
-	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { data: {} };
-	  var action = arguments[1];
-
-	  switch (action.type) {
-	    case 'SET_DATA':
-	      state = _extends({}, state, {
-	        data: action.payload
-	      });break;
-	  }
-	  return state;
-	};
-
-	exports.default = blog;
 
 /***/ }
 /******/ ]);
