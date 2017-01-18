@@ -10,6 +10,10 @@ let app = express();
 let multiparty = require('multiparty');
 let nodemailer = require('nodemailer')
 var formData = require("express-form-data");
+const crypto = require('crypto');
+
+const secret = 'aslkdjflksdfrwnelkfhs';
+let link = 'http://localhost:3000/#/user/'
 
 
 let mongoose = require('mongoose')
@@ -71,7 +75,7 @@ UserData.find((err, data) => {
 		blogs: []
 	}).save()
 })
-BlogData.find((err, data) => {console.log(data)})
+//BlogData.find((err, data) => {console.log(data)})
 
 
 
@@ -145,21 +149,34 @@ app.set('port', process.env.PORT || 3000);
 
 
 app.post('/upload', function(req, res, next){
-	console.log(req.body.image.path)
-	let date = new Date()
-	console.log(__dirname + '/public/img' + +date+'')
-	console.log( req.body.image.name.lastIndexOf('.'))
-	let reg = req.body.image.name.substr(req.body.image.name.lastIndexOf('.'))
-	console.log(__dirname+'/public/img/'+(+date)+reg)
-
-	console.log(req.body.image.path)
-	console.log(__dirname+'/public/img/'+(+date)+reg)
-	fs.rename(req.body.image.path, __dirname+'/public/img/'+(+date)+reg, (err, data)=> {
-		console.log(err)
-		console.log(data)
-	})
-	res.send(+date+reg)
+	if(req.session.userName){
+		UserData.find({name: req.session.userName}, (err, data) => {
+			if (data.length && req.body.image){
+				if(/image\/*/.test(req.body.image.headers['content-type']) && req.body.image.size <= 20 * 1024 * 1024){
+					let date = new Date()
+					let reg = req.body.image.name.substr(req.body.image.name.lastIndexOf('.'))
+					fs.rename(req.body.image.path, __dirname+'/public/img/'+(+date)+reg, (err, data)=> {
+					})
+					res.send({bul: true,data:+date+reg})
+				}else{
+					res.send({bul: false,msg:'Wrong image, max size: 20mb'})
+				}
+			}
+		})
+	}else	res.send({bul: false,msg:'Please sign in'})
 });
+
+/*apiR = express.router();
+
+app.use('/apiv1/', apiR) 
+
+apiR.get('/session', (req, res) => {
+	if (req.session.userName){
+		UserData.find({name : req.session.userName}, (err, data) => {
+			res.send(data)
+		})
+	}else res.send(false)
+})*/
 
 app.get('/', (req, res) =>{
 	res.set('Content-Type', 'text/html');
@@ -201,10 +218,24 @@ app.post('/register', (req, res) => {
 		'email': {
 			isEmail: {errorMessage: 'Invalid email'}
 		},
+		'name': {
+			matches:{
+				options:	(/^[a-z]+?[a-z0-9]{4,}/i),
+				errorMessage: 'Login must be a-z or 0-9, and beginign with a-z'
+			},
+			isLength:{
+				options: [{min:5, max: 16}],
+				errorMessage: 'login must be 5 and 16 chars long'
+			}
+		},
 		'pass': {
 			isLength:{
 				options: [{min:4, max:16}],
 				errorMessage: 'password must be 4 and 16 chars long'
+			},
+			matches:{
+				options:(/[a-z0-9]/i),
+				errorMassage:'password must be a-z 0-9'
 			},
 			'equals':{
 				options: req.body.cPass,
@@ -212,83 +243,122 @@ app.post('/register', (req, res) => {
 			}
 		}
 	})
-	let pass = req.body.pass.trim()
-	let error = /\s/g.test(pass);
 	let errors = req.validationErrors()
-	let register;
-	if (errors === false && error === false) register = true
-		else register = false
-			res.send({
-				password: error, 
-				body:errors, 
-				register
-			})
-		let link = 'http://localhost:3000/#/user/' + Math.random()
-		if (register) {
-			UserData.find((err, data) => {
-				new UserData({
-					name: req.body.name.
-					trim(),
-					pass: req.body.pass.trim(),
-					email: req.body.email.trim(),
-					verify: false,
-					verifyLink:  link ,
-					blogs: []
-				}).save()
-			})
-
-			let transporter  = nodemailer.createTransport({
-				host: 'smtp.mail.ru',
-				port: 465,
-				secure: true,
-				auth: {
-					user: 'wilix_send_mail',
-					pass: 'qwerasdfzxcv'
-				}
-			})
-
-			let mailOptions = {
-				from: '"Fred Foo " <wilix_send_mail@mail.ru>',
-				to: req.body.email.trim(), 
-				subject: 'thank you for registration on our blog',
-				text: 'you need to complite you registration by passing through ' + link
-			}
-
-			transporter.sendMail(mailOptions, (err, info) => {
-				if (err) console.log(err)
-					else console.log('Message sent' + info.response)
+	if (!errors){
+		UserData.find({name:req.body.name}, (err, data) => {
+			if(data.length){
+				res.send({type:false, msg: 'login exist'})
+			}else{
+				res.send({type:true, msg: 'Registration success! We send verify message on your e-mail, please go to verify link in this message'})
+				const hash = crypto.createHmac('sha256',secret).update(req.body.name).digest('hex');
+				UserData.find((err, data) => {
+					new UserData({
+						name: req.body.name.trim(),
+						pass: req.body.pass.trim(),
+						email: req.body.email.trim(),
+						verify: false,
+						verifyLink:  link + hash ,
+						blogs: []
+					}).save()
 				})
-		}
-	})
+
+				let transporter  = nodemailer.createTransport({
+					host: 'smtp.mail.ru',
+					port: 465,
+					secure: true,
+					auth: {
+						user: 'wilix_send_mail',
+						pass: 'qwerasdfzxcv'
+					}
+				})
+
+				let mailOptions = {
+					from: '"Fred Foo " <wilix_send_mail@mail.ru>',
+					to: req.body.email.trim(), 
+					subject: 'thank you for registration on our blog',
+					text: 'you need to complite you registration by passing through ' + link+hash
+				}
+
+				transporter.sendMail(mailOptions, (err, info) => {
+					if (err) console.log(err)
+						else console.log('Message sent' + info.response)
+					})
+			}
+		})
+	}else{
+		console.log(errors)
+		res.send({type: false, errors: errors})
+	} 
+
+
+})
 
 app.put('/andOfReg', (req, res) => {
-	UserData.findOneAndUpdate({verifyLink: `http://localhost:3000/#/user/${req.body.url}`}, {verify: true}).exec()
+
 	UserData.find({verifyLink: `http://localhost:3000/#/user/${req.body.url}`}, (err, data) => {
-		res.send(data[0].verify)
+		if (data.length && !data[0].verify){
+		UserData.findOneAndUpdate({verifyLink: `http://localhost:3000/#/user/${req.body.url}`}, {verify: true}).exec()
+		UserData.find({verifyLink: `http://localhost:3000/#/user/${req.body.url}`}, (err, d) => {
+			res.send(d[0].verify)
+		})
+		}	
 	})
 })
 
 app.post('/addnewblog', (req, res) => {
-	var form = new multiparty.Form();
-	console.log(form)
-	console.log(req.body)
-	console.log(req.body.name)
 	if(req.session.userName){
-		let name = req.body.name,
+		fs.readFile(__dirname+ '/public/img/'+req.body.pic, (err, data) => {
+			if (err) {
+				console.log(err)
+				return
+			}
+			var dateFormated = new Date();
+			var options = {
+			  year: 'numeric',
+			  month: 'long',
+			  day: 'numeric',
+			  weekday: 'long',
+			  hour: 'numeric',
+			  minute: 'numeric',
+			  second: 'numeric'
+			};
+			let name = req.body.name,
 			text = req.body.text,
-			date = req.body.date,
+			date = dateFormated.toLocaleString("en-US", options),
 			pic = req.body.pic,
 			author = req.session.userName;
-		BlogData.find({name: name}, (err, data) => {
-			if(!data.length){
-				new BlogData({name,text,date,author,pic}).save()
-				let arr;
-				UserData.find({name: author}, (err, doc)=> {
-					arr = [...doc[0].blogs]
-					arr.push(name)
-					UserData.findOneAndUpdate({name: author}, {blogs: arr}).exec()
-					res.send(true)
+
+			req.checkBody({
+				'name': {
+					isLength:{
+						options: [{min:5, max: 40}],
+						errorMessage: 'Name must be 5 and 40 chars long'
+					}
+				},
+				'text': {
+					isLength:{
+						options: [{min:50, max: 12000}],
+						errorMessage: 'Text must be 50 and 12000 chars long'
+					}
+				}
+			})
+
+			let errors = req.validationErrors()
+			if (!errors){
+				BlogData.find({name: name}, (err, data) => {
+					if(!data.length){
+						new BlogData({name,text,date,author,pic}).save()
+						let arr;
+						UserData.find({name: author}, (err, doc)=> {
+							arr = [...doc[0].blogs]
+							arr.push(name)
+							UserData.findOneAndUpdate({name: author}, {blogs: arr}).exec()
+							res.send({errors:[]})
+						})
+					}else res.send({errors:false, exist: true})
 				})
+			}else{
+				res.send({errors});
 			}
 		})
 	}

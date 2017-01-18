@@ -17,17 +17,16 @@ import { setData } from '../actions/sign.jsx'
 		
 	}
 	render(){
-		console.log(this.props.data)
-		console.log(Object.keys(this.props.data).length)
 		let data;
+		let img = "/img/"+this.props.data.pic;
 		if(Object.keys(this.props.data).length)
 			data = (
 				<article >
 			    <h4 >{this.props.data.name}</h4>
-				  <img  src="http://placehold.it/400x600" alt="Card image cap" />
+				  <img style={{maxWidth: '100%'}}  src={img} alt="Card image cap" />
 			    <p >{this.props.data.text}</p>
-			    <blockquote>{this.props.data.author}</blockquote>
-			    <p>{this.props.data.date}</p>
+			    <blockquote className='text-muted'>Author: {this.props.data.author}</blockquote>
+			    <p><small>Date: {this.props.data.date}</small></p>
 				</article>
 			)
 		return(

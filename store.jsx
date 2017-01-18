@@ -6,6 +6,7 @@ import register from './redusers/register.jsx'
 import ENDend from './redusers/end.jsx'
 import content from './redusers/content.jsx'
 import blog from './redusers/blog.jsx'
+import blogErrors from './redusers/blogErrors.jsx'
 
 export default createStore(
 	combineReducers({
@@ -13,7 +14,8 @@ export default createStore(
     register,
     ENDend,
     content,
-    blog
+    blog,
+    blogErrors
 	}),
 	{},
 	applyMiddleware(thunk)

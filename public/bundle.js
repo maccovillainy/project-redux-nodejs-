@@ -64,27 +64,27 @@
 
 	var _sign2 = _interopRequireDefault(_sign);
 
-	var _signIn = __webpack_require__(278);
+	var _signIn = __webpack_require__(279);
 
 	var _signIn2 = _interopRequireDefault(_signIn);
 
-	var _signUp = __webpack_require__(279);
+	var _signUp = __webpack_require__(280);
 
 	var _signUp2 = _interopRequireDefault(_signUp);
 
-	var _main = __webpack_require__(280);
+	var _main = __webpack_require__(281);
 
 	var _main2 = _interopRequireDefault(_main);
 
-	var _EndOfReg = __webpack_require__(283);
+	var _EndOfReg = __webpack_require__(284);
 
 	var _EndOfReg2 = _interopRequireDefault(_EndOfReg);
 
-	var _addBlog = __webpack_require__(284);
+	var _addBlog = __webpack_require__(285);
 
 	var _addBlog2 = _interopRequireDefault(_addBlog);
 
-	var _blog = __webpack_require__(282);
+	var _blog = __webpack_require__(283);
 
 	var _blog2 = _interopRequireDefault(_blog);
 
@@ -28726,6 +28726,7 @@
 	exports.getData = getData;
 	exports.setData = setData;
 	exports.end = end;
+	exports.setErrors = setErrors;
 	exports.signOut = signOut;
 
 	var _store = __webpack_require__(271);
@@ -28744,16 +28745,13 @@
 	  };
 	}
 
-	function register(existName, existEmail, nameInalid, passInvalid, errors, register) {
+	function register(type, errors, msg) {
 	  return {
 	    type: 'REGISTER',
 	    payload: {
-	      existName: existName,
-	      existEmail: existEmail,
-	      nameInalid: nameInalid,
-	      passInvalid: passInvalid,
+	      type: type,
 	      errors: errors,
-	      register: register
+	      msg: msg
 	    }
 	  };
 	}
@@ -28776,6 +28774,17 @@
 	  return {
 	    type: 'END',
 	    payload: bul
+	  };
+	}
+
+	function setErrors(arr, ex) {
+	  console.log(ex);
+	  return {
+	    type: 'SET_ERRORS',
+	    payload: {
+	      errors: arr,
+	      exist: ex
+	    }
 	  };
 	}
 
@@ -28816,7 +28825,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	  value: true
 	});
 
 	var _redux = __webpack_require__(242);
@@ -28845,14 +28854,19 @@
 
 	var _blog2 = _interopRequireDefault(_blog);
 
+	var _blogErrors = __webpack_require__(278);
+
+	var _blogErrors2 = _interopRequireDefault(_blogErrors);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = (0, _redux.createStore)((0, _redux.combineReducers)({
-		signed: _signed2.default,
-		register: _register2.default,
-		ENDend: _end2.default,
-		content: _content2.default,
-		blog: _blog2.default
+	  signed: _signed2.default,
+	  register: _register2.default,
+	  ENDend: _end2.default,
+	  content: _content2.default,
+	  blog: _blog2.default,
+	  blogErrors: _blogErrors2.default
 	}), {}, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 
 /***/ },
@@ -28929,24 +28943,18 @@
 
 	var register = function register() {
 	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-	    existName: false,
-	    existEmail: false,
-	    nameInalid: false,
-	    passInvalid: false,
+	    type: false,
 	    errors: false,
-	    register: false
+	    msg: false
 	  };
 	  var action = arguments[1];
 
 	  switch (action.type) {
 	    case 'REGISTER':
 	      state = _extends({}, state, {
-	        existName: action.payload.existName,
-	        existEmail: action.payload.existEmail,
-	        nameInalid: action.payload.nameInalid,
-	        passInvalid: action.payload.passInvalid,
+	        type: action.payload.type,
 	        errors: action.payload.errors,
-	        register: action.payload.register
+	        msg: action.payload.msg
 	      });break;
 	  }
 	  return state;
@@ -29037,6 +29045,34 @@
 
 /***/ },
 /* 278 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var blogErrors = function blogErrors() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { errors: false, exist: false };
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case 'SET_ERRORS':
+	      state = _extends({}, state, {
+	        errors: action.payload.errors,
+	        exist: action.payload.exist
+	      });break;
+	  }
+	  return state;
+	};
+
+	exports.default = blogErrors;
+
+/***/ },
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29306,7 +29342,7 @@
 	*/
 
 /***/ },
-/* 279 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29369,14 +29405,7 @@
 						email: email
 					}
 				}).then(function (res) {
-					console.log(res.register);
-					var existName = false,
-					    existEmail = false,
-					    nameInalid = false,
-					    passInvalid = res.password,
-					    errors = res.body,
-					    reg = res.register;
-					_this2.props.register(existName, existEmail, nameInalid, passInvalid, errors, reg);
+					_this2.props.register(res.type, res.errors, res.msg);
 				});
 			}
 		}, {
@@ -29391,7 +29420,8 @@
 
 				var data = [],
 				    pass = '',
-				    success = '';
+				    success = '',
+				    msg = void 0;
 				if (this.props.verify.errors) {
 					data = this.props.verify.errors.map(function (item, i) {
 						return _react2.default.createElement(
@@ -29415,30 +29445,28 @@
 						);
 					});
 				}
-				if (this.props.verify.passInvalid) {
-					pass = _react2.default.createElement(
-						'strong',
-						{ className: 'text-danger' },
-						'incorrect data password'
-					);
-				}
-				console.log(this.props.verify.register);
-				if (this.props.verify.register) {
+				if (this.props.verify.msg) msg = _react2.default.createElement(
+					'strong',
+					{ className: 'text-danger' },
+					this.props.verify.msg
+				);
+				if (this.props.verify.type) {
+					msg = false;
 					success = _react2.default.createElement(
 						'p',
 						{ className: 'text-success' },
-						'Registration success! We send verify message on your e-mail, please go to verify link in this message'
+						this.props.verify.msg
 					);
 					setTimeout(function () {
-						_this3.props.register(false, false, false, false, false);
+						_this3.props.register(false, false, false);
 						_reactRouter.hashHistory.push('/');
 					}, 3000);
 				}
 				return _react2.default.createElement(
 					'div',
 					null,
+					msg,
 					data,
-					pass,
 					success,
 					_react2.default.createElement(
 						'div',
@@ -29543,7 +29571,7 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(SignUp);
 
 /***/ },
-/* 280 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29566,11 +29594,11 @@
 
 	var _sign2 = _interopRequireDefault(_sign);
 
-	var _signIn = __webpack_require__(278);
+	var _signIn = __webpack_require__(279);
 
 	var _signIn2 = _interopRequireDefault(_signIn);
 
-	var _Content = __webpack_require__(281);
+	var _Content = __webpack_require__(282);
 
 	var _Content2 = _interopRequireDefault(_Content);
 
@@ -29613,7 +29641,7 @@
 	exports.default = Main;
 
 /***/ },
-/* 281 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29634,7 +29662,7 @@
 
 	var _sign = __webpack_require__(270);
 
-	var _blog = __webpack_require__(282);
+	var _blog = __webpack_require__(283);
 
 	var _blog2 = _interopRequireDefault(_blog);
 
@@ -29661,6 +29689,7 @@
 				var _this2 = this;
 
 				$.ajax({ url: 'getcontent' }).then(function (res) {
+					console.log(res);
 					_this2.props.getData(res);
 				}).catch(function (err) {
 					return console.log(err);
@@ -29673,13 +29702,14 @@
 				if (this.props.data.length) {
 					blogs = this.props.data.map(function (item) {
 						var link = "/blog/" + item.name;
+						var img = "/img/" + item.pic;
 						return _react2.default.createElement(
 							'div',
 							{ key: item._id, style: { border: 0 }, className: 'card col-md-3 ' },
 							_react2.default.createElement(
 								'div',
 								{ className: 'card' },
-								_react2.default.createElement('img', { style: { height: 200 }, className: 'card-img-top', src: 'http://placehold.it/400x600', alt: 'Card image cap' }),
+								_react2.default.createElement('img', { style: { maxHeight: 200 }, className: 'card-img-top', src: img, alt: 'Card image cap' }),
 								_react2.default.createElement(
 									'div',
 									{ className: 'card-block' },
@@ -29738,7 +29768,7 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(Content);
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29795,9 +29825,8 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				console.log(this.props.data);
-				console.log(Object.keys(this.props.data).length);
 				var data = void 0;
+				var img = "/img/" + this.props.data.pic;
 				if (Object.keys(this.props.data).length) data = _react2.default.createElement(
 					'article',
 					null,
@@ -29806,7 +29835,7 @@
 						null,
 						this.props.data.name
 					),
-					_react2.default.createElement('img', { src: 'http://placehold.it/400x600', alt: 'Card image cap' }),
+					_react2.default.createElement('img', { style: { maxWidth: '100%' }, src: img, alt: 'Card image cap' }),
 					_react2.default.createElement(
 						'p',
 						null,
@@ -29814,13 +29843,19 @@
 					),
 					_react2.default.createElement(
 						'blockquote',
-						null,
+						{ className: 'text-muted' },
+						'Author: ',
 						this.props.data.author
 					),
 					_react2.default.createElement(
 						'p',
 						null,
-						this.props.data.date
+						_react2.default.createElement(
+							'small',
+							null,
+							'Date: ',
+							this.props.data.date
+						)
 					)
 				);
 				return _react2.default.createElement(
@@ -29851,7 +29886,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Blog);
 
 /***/ },
-/* 283 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29946,7 +29981,7 @@
 	exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(EndOfReg);
 
 /***/ },
-/* 284 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29954,8 +29989,6 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -29966,6 +29999,12 @@
 	var _reactDom = __webpack_require__(32);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactRedux = __webpack_require__(233);
+
+	var _reactRouter = __webpack_require__(178);
+
+	var _sign = __webpack_require__(270);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29990,49 +30029,46 @@
 	      var _this2 = this;
 
 	      e.preventDefault();
-	      //let files = ReactDOM.findDOMNode(this.refs.file).value
 	      var file = this.refs.file.files[0];
-	      console.log(file);
-	      //data-url="/upload"
-	      /*    $('#fieldPhoto' ).fileupload({
-	              dataType: 'json',
-	              add: function(e, data){
-	                console.log(data.data)
-	                $.ajax({
-	                  method: 'post',
-	                  url: '/upload',
-	                  data
-	                })
-	              }
-	              })
-	      */
-	      console.log(typeof file === 'undefined' ? 'undefined' : _typeof(file));
 	      var data = new FormData();
 	      data.append('image', file);
-
-	      $.post({
+	      if (file) $.post({
 	        url: '/upload',
 	        processData: false,
 	        contentType: false,
 	        data: data
 	      }).then(function (res) {
-	        console.log(res);
-
-	        var name = _reactDom2.default.findDOMNode(_this2.refs.name).value,
-	            text = _reactDom2.default.findDOMNode(_this2.refs.text).value,
-	            date = new Date(),
-	            pic = res;
-	        $.ajax({
-	          method: 'post',
-	          url: '/addnewblog',
-	          data: {
-	            name: name, text: text, date: date, pic: pic
-	          }
-	        }).then(function (res) {
-	          return console.log(res);
-	        }).catch(function (err) {
-	          return console.log(err);
-	        });
+	        if (res.bul) {
+	          var name = _reactDom2.default.findDOMNode(_this2.refs.name).value,
+	              text = _reactDom2.default.findDOMNode(_this2.refs.text).value,
+	              date = new Date(),
+	              pic = res.data;
+	          $.ajax({
+	            method: 'post',
+	            url: '/addnewblog',
+	            data: {
+	              name: name, text: text, date: date, pic: pic
+	            }
+	          }).then(function (res) {
+	            console.log(res.errors);
+	            if (!res.exist) {
+	              _this2.props.setErrors(res.errors, false);
+	              if (!res.errors.length) {
+	                setTimeout(function () {
+	                  _this2.props.setErrors([], false);
+	                  _reactRouter.hashHistory.push('/');
+	                }, 3000);
+	              }
+	            } else {
+	              _this2.props.setErrors(false, true);
+	              console.log('a');
+	            }
+	          }).catch(function (err) {
+	            return console.log(err);
+	          });
+	        } else {
+	          alert(res.msg);
+	        }
 	      });
 	    }
 	  }, {
@@ -30040,9 +30076,44 @@
 	    value: function render() {
 	      var _this3 = this;
 
+	      var data = void 0;
+	      console.log(this.props.blogErrors);
+	      if (this.props.blogErrors.errors.length) {
+	        data = this.props.blogErrors.errors.map(function (item, i) {
+	          return _react2.default.createElement(
+	            'p',
+	            { key: i },
+	            _react2.default.createElement(
+	              'strong',
+	              { className: 'text-danger' },
+	              item.param,
+	              ': '
+	            ),
+	            _react2.default.createElement(
+	              'em',
+	              { className: 'text-danger' },
+	              item.msg
+	            )
+	          );
+	        });
+	      } else if (this.props.blogErrors.errors === false) {
+	        data = '';
+	      } else {
+	        data = _react2.default.createElement(
+	          'p',
+	          { className: 'text-success' },
+	          'Blog is added'
+	        );
+	      }
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'container' },
+	        this.props.blogErrors.exist ? _react2.default.createElement(
+	          'p',
+	          { className: 'text-danger' },
+	          'blog exist'
+	        ) : '',
+	        data,
 	        _react2.default.createElement(
 	          'form',
 	          null,
@@ -30096,7 +30167,21 @@
 	  return AddBlock;
 	}(_react.Component);
 
-	exports.default = AddBlock;
+	var State = function State(state) {
+	  return {
+	    blogErrors: state.blogErrors
+	  };
+	};
+
+	var Dispatch = function Dispatch(dispatch) {
+	  return {
+	    setErrors: function setErrors(err, ex) {
+	      dispatch((0, _sign.setErrors)(err, ex));
+	    }
+	  };
+	};
+
+	exports.default = (0, _reactRedux.connect)(State, Dispatch)(AddBlock);
 
 /***/ }
 /******/ ]);

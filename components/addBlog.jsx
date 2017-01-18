@@ -1,54 +1,74 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-export default class  AddBlock extends Component{
+import { connect } from 'react-redux'
+import { hashHistory } from 'react-router'
+
+import { setErrors } from '../actions/sign.jsx'
+class  AddBlock extends Component{
   add(e){
     e.preventDefault(); 
-    //let files = ReactDOM.findDOMNode(this.refs.file).value
     let file = this.refs.file.files[0]
-    console.log(file)
-    //data-url="/upload"
-/*    $('#fieldPhoto' ).fileupload({
-        dataType: 'json',
-        add: function(e, data){
-          console.log(data.data)
-          $.ajax({
-            method: 'post',
-            url: '/upload',
-            data
-          })
-        }
-        })
-*/
-    console.log(typeof file)
     var data = new FormData();
     data.append( 'image', file );
-
+    if(file)
     $.post({
       url: '/upload',
       processData: false,
       contentType: false,
       data
     }).then(res => {
-      console.log(res)
-
-      let name = ReactDOM.findDOMNode(this.refs.name).value,
-      text = ReactDOM.findDOMNode(this.refs.text).value,
-      date = new Date(),
-      pic = res;
-        $.ajax({
-        method: 'post', 
-        url:'/addnewblog',
-        data:{
-          name,text,date,pic
-        }
-      }).then(res => console.log(res))
-      .catch(err => console.log(err))
+      if (res.bul){
+        let name = ReactDOM.findDOMNode(this.refs.name).value,
+        text = ReactDOM.findDOMNode(this.refs.text).value,
+        date = new Date(),
+        pic = res.data;
+          $.ajax({
+          method: 'post', 
+          url:'/addnewblog',
+          data:{
+            name,text,date,pic
+          }
+        }).then(res => {
+          console.log(res.errors)
+          if (!res.exist){
+            this.props.setErrors(res.errors, false)
+            if (!res.errors.length){
+              setTimeout(()=>{
+                this.props.setErrors([], false)
+                hashHistory.push('/')
+              },3000)
+            }
+          }else {
+            this.props.setErrors(false, true)
+            console.log('a')
+          }
+          })
+        .catch(err => console.log(err))
+      }else{
+        alert(res.msg)
+      }
     })
     
   }
   render(){
+    let data;
+    console.log(this.props.blogErrors)
+    if (this.props.blogErrors.errors.length){
+      data = this.props.blogErrors.errors.map((item, i) => (
+          <p key={i}>
+            <strong className='text-danger'>{item.param}: </strong> 
+            <em className='text-danger'>{item.msg}</em>
+          </p>
+        ))
+    }else if (this.props.blogErrors.errors === false){
+      data = '';
+    }else{
+      data = <p className='text-success'>Blog is added</p>
+    }
     return(
       <div className='container'>
+        {this.props.blogErrors.exist ? <p className="text-danger">blog exist</p> : ''}
+        {data}
         <form>
           <div className="form-group">
             <label htmlFor="Name">Name of your article</label>
@@ -69,3 +89,19 @@ export default class  AddBlock extends Component{
     )
   }
 }
+
+const State = (state) => {
+  return {
+    blogErrors: state.blogErrors
+  }
+}
+
+const Dispatch = (dispatch) => {
+  return {
+    setErrors: (err, ex) => {
+      dispatch(setErrors(err, ex))
+    }
+  }
+}
+
+export default connect(State, Dispatch)(AddBlock)

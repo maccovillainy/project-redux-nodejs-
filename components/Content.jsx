@@ -9,6 +9,7 @@ import Blog  from './blog.jsx'
 class Content extends Component{
 	componentWillMount() {
 		$.ajax({url:'getcontent'}).then(res => {
+			console.log(res)
 			this.props.getData(res)
 		}).catch(err => console.log(err))
 	}
@@ -17,10 +18,11 @@ class Content extends Component{
 		if (this.props.data.length){
 				blogs = this.props.data.map(item => {
 					let link = "/blog/"+item.name;
+					let img = "/img/"+item.pic;
 					return (
 						<div key={item._id} style={{border: 0}} className="card col-md-3 " >
 							<div className="card" >
-							  <img style={{height: 200}} className="card-img-top" src="http://placehold.it/400x600" alt="Card image cap" />
+							  <img style={{maxHeight: 200}} className="card-img-top" src={img} alt="Card image cap" />
 							  <div className="card-block">
 							    <h4 className="card-title">{item.name}</h4>
 							    <p className="card-text">{item.text.substring(0,30)}...</p>

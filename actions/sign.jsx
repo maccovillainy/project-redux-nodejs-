@@ -11,21 +11,16 @@ export function goSigned(tr, name){
 }
 
 
-export function register(existName,
-  existEmail,
-  nameInalid,
-  passInvalid,
+export function register(type,
   errors,
-  register){
+  msg
+  ){
   return {
     type: 'REGISTER',
     payload: {
-      existName,
-      existEmail,
-      nameInalid,
-      passInvalid,
+      type,
       errors,
-      register
+      msg
     }
   }
 }
@@ -50,6 +45,18 @@ export function end(bul){
   return {
     type: 'END',
     payload: bul
+    }
+  }
+
+
+export function setErrors(arr, ex){
+  console.log(ex)
+  return {
+    type: 'SET_ERRORS',
+    payload: {
+        errors:arr,
+        exist:ex
+      }
     }
   }
 

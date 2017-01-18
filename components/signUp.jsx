@@ -25,21 +25,14 @@ class SignUp extends Component {
 				email
 			}
 		}).then(res => {
-			console.log(res.register)
-			let existName = false,
-				existEmail = false,
-				nameInalid = false,
-				passInvalid = res.password,
-				errors  = res.body,
-				reg = res.register;
-				this.props.register(existName, existEmail, nameInalid, passInvalid, errors,reg)
+				this.props.register(res.type, res.errors, res.msg)
 		})
 	}
 	componentWillReceiveProps(nextProps) {
 		//console.log(nextProps)
 	}
 	render(){
-					let data = [], pass = '', success = '';
+					let data = [], pass = '', success = '', msg;
 					if (this.props.verify.errors){
 						data = this.props.verify.errors.map((item, i) => (
 													<div key={i}>
@@ -48,22 +41,20 @@ class SignUp extends Component {
 															<em className='text-danger' >{item.msg}</em>
 														</p>
 													</div>))
-				}
-				if (this.props.verify.passInvalid){
-					pass = <strong className='text-danger' >incorrect data password</strong>
 				} 
-				console.log(this.props.verify.register)
-				if (this.props.verify.register){
-					success = <p className='text-success'>Registration success! We send verify message on your e-mail, please go to verify link in this message</p>
+				if(this.props.verify.msg) msg = <strong className='text-danger' >{this.props.verify.msg}</strong>
+				if (this.props.verify.type){
+					msg = false;
+					success = <p className='text-success'>{this.props.verify.msg}</p>
 					setTimeout(() => {
-						this.props.register(false,false,false,false,false)
+						this.props.register(false,false,false)
 						hashHistory.push('/')
 					}, 3000)
 				}
 		return (
 			<div>
+				{msg}
 				{data}
-				{pass}
 				{success}
 				<div className="container">
 				  <form>
