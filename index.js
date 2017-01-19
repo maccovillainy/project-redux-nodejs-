@@ -146,25 +146,104 @@ app.set('port', process.env.PORT || 3000);
 
 
 
+let date, reg;
 
-
-app.post('/upload', function(req, res, next){
+app.post('/upload', (req, res) => {
 	if(req.session.userName){
-		UserData.find({name: req.session.userName}, (err, data) => {
-			if (data.length && req.body.image){
-				if(/image\/*/.test(req.body.image.headers['content-type']) && req.body.image.size <= 20 * 1024 * 1024){
-					let date = new Date()
-					let reg = req.body.image.name.substr(req.body.image.name.lastIndexOf('.'))
-					fs.rename(req.body.image.path, __dirname+'/public/img/'+(+date)+reg, (err, data)=> {
-					})
-					res.send({bul: true,data:+date+reg})
-				}else{
-					res.send({bul: false,msg:'Wrong image, max size: 20mb'})
+
+			var dateFormated = new Date();
+			var options = {
+			  year: 'numeric',
+			  month: 'long',
+			  day: 'numeric',
+			  weekday: 'long',
+			  hour: 'numeric',
+			  minute: 'numeric',
+			  second: 'numeric'
+			};
+			let name = req.body.name,
+				text = req.body.text,
+				date = dateFormated.toLocaleString("en-US", options),
+				author = req.session.userName;
+			req.checkBody({
+				'name': {
+					isLength:{
+						options: [{min:5, max: 40}],
+						errorMessage: 'Name must be 5 and 40 chars long'
+					}
+				},
+				'text': {
+					isLength:{
+						options: [{min:50, max: 12000}],
+						errorMessage: 'Text must be 50 and 12000 chars long'
+					}
 				}
+			})
+
+			let errors = req.validationErrors()
+			if (!errors){
+				BlogData.find({name: name}, (err, data) => {
+					console.log(data)
+					console.log(err)
+					console.log('asasas')
+					if(!data.length){
+
+						if (req.body.image){
+							if(/image\/*/.test(req.body.image.headers['content-type']) && req.body.image.size <= 20 * 1024 * 1024){
+								date = new Date()
+								reg = req.body.image.name.substr(req.body.image.name.lastIndexOf('.'))
+								let pic = (+date)+reg;
+								fs.rename(req.body.image.path, __dirname+'/public/img/'+(+date)+reg, (err, data)=> {
+									new BlogData({name,text,date,author,pic}).save()
+									let arr;
+									UserData.find({name: author}, (err, doc)=> {
+										arr = [...doc[0].blogs]
+										arr.push(name)
+										UserData.findOneAndUpdate({name: author}, {blogs: arr}).exec()
+										res.send({errors:[],exist: false})
+									})
+								})
+							}else{
+								res.send({bul: false,msg:'Wrong image, max size: 20mb'})
+							}
+						}else{
+							res.send({bul: false,msg:'have not image'})
+						}
+					}else res.send({errors:false, exist: true})
+				})
+			}else{
+				res.send({errors, exist: false});
 			}
-		})
-	}else	res.send({bul: false,msg:'Please sign in'})
-});
+		}
+	})
+
+
+
+
+
+
+
+
+// app.post('/upload', function(req, res, next){
+// 	console.log(req.body)
+// 	//res.send(req.body)
+// 	if(req.session.userName){
+// 		UserData.find({name: req.session.userName}, (err, data) => {
+// 			if (data.length && req.body.image){
+// 				if(/image\/*/.test(req.body.image.headers['content-type']) && req.body.image.size <= 20 * 1024 * 1024){
+// 					 date = new Date()
+// 					 reg = req.body.image.name.substr(req.body.image.name.lastIndexOf('.'))
+// 					fs.rename(req.body.image.path, __dirname+'/public/img/'+(+date)+reg, (err, data)=> {
+// 					})
+// 					next()
+// 				}else{
+// 					res.send({bul: false,msg:'Wrong image, max size: 20mb'})
+// 				}
+// 			}
+// 		})
+// 	}else	res.send({bul: false,msg:'Please sign in'})
+// });
+
 
 /*apiR = express.router();
 

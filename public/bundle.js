@@ -30032,43 +30032,34 @@
 	      var file = this.refs.file.files[0];
 	      var data = new FormData();
 	      data.append('image', file);
+	      data.append('name', _reactDom2.default.findDOMNode(this.refs.name).value);
+	      data.append('text', _reactDom2.default.findDOMNode(this.refs.text).value);
 	      if (file) $.post({
 	        url: '/upload',
 	        processData: false,
 	        contentType: false,
 	        data: data
 	      }).then(function (res) {
-	        if (res.bul) {
-	          var name = _reactDom2.default.findDOMNode(_this2.refs.name).value,
-	              text = _reactDom2.default.findDOMNode(_this2.refs.text).value,
-	              date = new Date(),
-	              pic = res.data;
-	          $.ajax({
-	            method: 'post',
-	            url: '/addnewblog',
-	            data: {
-	              name: name, text: text, date: date, pic: pic
-	            }
-	          }).then(function (res) {
-	            console.log(res.errors);
-	            if (!res.exist) {
-	              _this2.props.setErrors(res.errors, false);
-	              if (!res.errors.length) {
-	                setTimeout(function () {
-	                  _this2.props.setErrors([], false);
-	                  _reactRouter.hashHistory.push('/');
-	                }, 3000);
-	              }
-	            } else {
-	              _this2.props.setErrors(false, true);
-	              console.log('a');
-	            }
-	          }).catch(function (err) {
-	            return console.log(err);
-	          });
-	        } else {
+	        console.log(res);
+	        console.log(res.bul === false);
+	        if (res.bul === false) {
 	          alert(res.msg);
+	        } else {
+	          if (res.exist === false) {
+	            _this2.props.setErrors(res.errors, false);
+	            if (!res.errors.length) {
+	              setTimeout(function () {
+	                _this2.props.setErrors([], false);
+	                _reactRouter.hashHistory.push('/');
+	              }, 3000);
+	            }
+	          } else {
+	            _this2.props.setErrors(false, true);
+	            console.log('a');
+	          }
 	        }
+	      }).catch(function (err) {
+	        return console.log(err);
 	      });
 	    }
 	  }, {

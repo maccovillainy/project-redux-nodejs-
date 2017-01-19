@@ -10,6 +10,8 @@ class  AddBlock extends Component{
     let file = this.refs.file.files[0]
     var data = new FormData();
     data.append( 'image', file );
+    data.append( 'name', ReactDOM.findDOMNode(this.refs.name).value );
+    data.append( 'text', ReactDOM.findDOMNode(this.refs.text).value );
     if(file)
     $.post({
       url: '/upload',
@@ -17,37 +19,26 @@ class  AddBlock extends Component{
       contentType: false,
       data
     }).then(res => {
-      if (res.bul){
-        let name = ReactDOM.findDOMNode(this.refs.name).value,
-        text = ReactDOM.findDOMNode(this.refs.text).value,
-        date = new Date(),
-        pic = res.data;
-          $.ajax({
-          method: 'post', 
-          url:'/addnewblog',
-          data:{
-            name,text,date,pic
-          }
-        }).then(res => {
-          console.log(res.errors)
-          if (!res.exist){
-            this.props.setErrors(res.errors, false)
-            if (!res.errors.length){
-              setTimeout(()=>{
-                this.props.setErrors([], false)
-                hashHistory.push('/')
-              },3000)
-            }
-          }else {
-            this.props.setErrors(false, true)
-            console.log('a')
-          }
-          })
-        .catch(err => console.log(err))
+      console.log(res)
+      console.log(res.bul === false)
+      if (res.bul === false){
+        alert(res.msg)  
       }else{
-        alert(res.msg)
+        if (res.exist === false){
+          this.props.setErrors(res.errors, false)
+          if (!res.errors.length){
+            setTimeout(()=>{
+              this.props.setErrors([], false)
+              hashHistory.push('/')
+            },3000)
+          }
+        }else {
+          this.props.setErrors(false, true)
+          console.log('a')
+        }
       }
-    })
+
+    }).catch(err => console.log(err))
     
   }
   render(){
