@@ -1,20 +1,23 @@
 module.exports = {
+
   watch: true,
-  entry: './app.jsx',
+
+  entry: './index.js',
   output: {
     filename: 'bundle.js',
     path: './public'
   },
-  module:{
+
+  module: {
     loaders: [
       {
-        test: /\.jsx?$/,
-        exclude: /(node_modules|bower_components)/,
+        test: /\.js$|\.jsx$/,
         loader: 'babel-loader',
-        query: {
-          presets: ['es2015',"stage-0", 'react']
+        exclude: /(node_modules)/,
+        query:{
+          presets: ['es2015', 'react', 'stage-0']
         }
       }
     ]
   }
-}
+};
