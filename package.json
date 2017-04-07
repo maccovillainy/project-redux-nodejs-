@@ -39,6 +39,7 @@
     "reactstrap": "^4.5.0",
     "redux": "^3.6.0",
     "redux-logger": "^2.8.1",
+    "redux-thunk": "^2.2.0",
     "request": "^2.81.0",
     "serve-static": "^1.11.2"
   }

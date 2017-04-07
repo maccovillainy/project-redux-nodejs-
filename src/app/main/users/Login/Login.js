@@ -1,20 +1,31 @@
 import React, {Component} from 'react';
-import { Link } from 'react-router'
+import {Link} from 'react-router'
 import axios from 'axios'
 
 class Login extends Component {
-  signIn(){
-    console.log('here')
+  constructor(props) {
+    super(props)
+    this.state = {
+        username: '',
+        password: ''
+    }
+  }
+
+  signIn() {
     axios.post('http://localhost:1337/user/login', {
-      username: '3anyna',
-      password: '6o6pa'
+      username: this.state.username,
+      password: this.state.password
     }).then(res => {
-      console.log(1111,res.data)
+      console.log(1111, res.data)
+      this.setState({
+        username: '',
+        password: ''})
     })
       .catch(err => {
-        console.log(222,err)
+        console.log(222, err)
       })
   }
+
   render() {
     return (
       <div className="app flex-row align-items-center">
@@ -28,15 +39,28 @@ class Login extends Component {
                     <p className="text-muted">Sign In to your account</p>
                     <div className="input-group mb-1">
                       <span className="input-group-addon"><i className="icon-user"></i></span>
-                      <input type="text" className="form-control" placeholder="Username"/>
+                      <input
+                        value={this.state.username}
+                        onChange={(e) => this.setState({username: e.target.value})}
+                        type="text"
+                        className="form-control"
+                        placeholder="Username"
+                      />
                     </div>
                     <div className="input-group mb-2">
                       <span className="input-group-addon"><i className="icon-lock"></i></span>
-                      <input type="password" className="form-control" placeholder="Password"/>
+                      <input
+                        value={this.state.password}
+                        onChange={(e) => this.setState({password: e.target.value})}
+                        type="password"
+                        className="form-control"
+                        placeholder="Password"
+                      />
                     </div>
                     <div className="row">
                       <div className="col-6">
-                        <button onClick={() => this.signIn()} type="button" className="btn btn-primary px-2">Login</button>
+                        <button onClick={() => this.signIn()} type="button" className="btn btn-primary px-2">Login
+                        </button>
                       </div>
                       <div className="col-6 text-right">
                         <button type="button" className="btn btn-link px-0">Forgot password?</button>

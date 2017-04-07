@@ -5,23 +5,26 @@ class Register extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      data: {
-        login: '',
-        pass: '',
-        confirmPas: '',
-        email: ''
-      }
+      username: '',
+      password: '',
+      confirmPas: '',
+      email: ''
     }
   }
 
-  signUn() {
-    console.log('here')
+  signUp() {
+    console.log('here',console.log(this.state))
     axios.put('http://localhost:1337/user', {
-      username: '3anyna',
-      password: '6o6pa',
-      email: '3ni3DbI@mail.ru'
+      username: this.state.username,
+      password: this.state.password,
+      email: this.state.email
     }).then(res => {
-      console.log(1111, res.data)
+      this.setState({
+        username: '',
+        password: '',
+        confirmPas: '',
+        email: ''
+      });
     })
       .catch(err => {
         console.log(222, err)
@@ -29,7 +32,6 @@ class Register extends Component {
   }
 
   render() {
-    console.log(this.state.data)
     return (
       <div className="app flex-row align-items-center">
         <div className="container">
@@ -41,42 +43,44 @@ class Register extends Component {
                   <p className="text-muted">Create your account</p>
                   <div className="input-group mb-1">
                     <span className="input-group-addon"><i className="icon-user"></i></span>
-                    <input onChange={(e)=>this.setState({
-                      ...this.state.data,
-                      username: e.target.value
-                    })} type="text" className="form-control" placeholder="Username"/>
+                    <input
+                      value={this.state.username}
+                      onChange={(e)=>this.setState({username: e.target.value})}
+                      type="text"
+                      className="form-control"
+                      placeholder="Username"/>
                   </div>
 
                   <div className="input-group mb-1">
                     <span className="input-group-addon">@</span>
-                    <input onChange={(e)=>this.setState({
-                      ...this.state.data,
-                      email: e.target.value
-                    })} type="text" className="form-control" placeholder="Email"/>
+                    <input
+                      value={this.state.email}
+                      onChange={(e)=>this.setState({email: e.target.value})}
+                      type="text"
+                      className="form-control"
+                      placeholder="Email"/>
                   </div>
 
                   <div className="input-group mb-1">
                     <span className="input-group-addon"><i className="icon-lock"></i></span>
-                    <input value={this.state.data.pass} onChange={(e)=>{
-                    console.log(e.target.value)
-                    this.setState({
-                    data:{
-                      ...this.state.data,
-                      pass: e.target.value
-                    }
-                    })
-                    }} type="password" className="form-control" placeholder="Password"/>
+                    <input
+                      value={this.state.password}
+                      onChange={(e)=>{ this.setState({password: e.target.value})}}
+                      type="password"
+                      className="form-control"
+                      placeholder="Password"/>
                   </div>
 
                   <div className="input-group mb-2">
                     <span className="input-group-addon"><i className="icon-lock"></i></span>
-                    <input onChange={(e)=>this.setState({
-                      ...this.state.data,
-                      confirmPas: e.target.value
-                    })} type="password" className="form-control" placeholder="Repeat password"/>
+                    <input value={this.state.confirmPas}
+                           onChange={(e)=>this.setState({confirmPas: e.target.value})}
+                           type="password"
+                           className="form-control"
+                           placeholder="Repeat password"/>
                   </div>
 
-                  <button onClick={() => this.signUn()} type="button" className="btn btn-block btn-success">Create
+                  <button onClick={() => this.signUp()} type="button" className="btn btn-block btn-success">Create
                     Account
                   </button>
                 </div>
