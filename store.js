@@ -7,4 +7,4 @@ export default createStore(combineReducers({
   user
 }),
 {},
-applyMiddleware(logger()), thunk);
+applyMiddleware(logger(), thunk));

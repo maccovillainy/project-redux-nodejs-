@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios'
+import { connect } from 'react-redux';
+import { login } from '../action/user'
 
 class Register extends Component {
   constructor(props) {
@@ -14,6 +16,8 @@ class Register extends Component {
 
   signUp() {
     console.log('here',console.log(this.state))
+    this.props.login()
+    return
     axios.put('http://localhost:1337/user', {
       username: this.state.username,
       password: this.state.password,
@@ -93,4 +97,16 @@ class Register extends Component {
   }
 }
 
-export default Register;
+const get = (state) => {
+  return {
+    user: state.user
+  }
+};
+const set = (dispatch) => {
+  return {
+    login: (name) => {
+      dispatch(login(name))
+    }
+  }
+};
+export default connect(get,set)(Register);

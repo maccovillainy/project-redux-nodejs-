@@ -1,1 +1,1 @@
-export const ADD_NAME = 'ADD_NAME';
+export const LOGIN = 'LOGIN';

@@ -1,16 +1,16 @@
-import { ADD_NAME } from '../const/user'
+import { LOGIN } from '../const/user'
 export default (state = {
-  id: 1,
-  name: 'Sign in',
-  lastname: '',
-  auth: false
+  username: '',
+  is_login: '',
+  token: '',
 }, action) => {
   switch(action.type){
-    case ADD_NAME:
+    case LOGIN:
       state = {
         ...state,
-        id: state.id + 1,
-        name: action.payload
+        username: action.payload.username,
+        is_login: action.payload.is_login,
+        token: action.payload.token
 
       };break;
   }
